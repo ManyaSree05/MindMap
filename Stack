@@ -109,3 +109,149 @@ Each element is pushed and popped only once.
 
 Space Complexity
 O(N) for stack in worst case.
+
+Trapping rain water
+---------------------------
+Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
+
+Problem Explanation
+You are given an array of non-negative integers:
+heights = [h0, h1, h2, ..., hn-1]
+Each integer represents the height of a vertical bar, and the width of each bar is 1 unit.
+After it rains, water will get trapped in the "valleys" between bars. You need to compute the total amount of water trapped.
+
+How Water Trapping Works
+For a given bar at position i, the water that can sit on top of it is determined by:
+water_at_i=min(max_height_to_left,max_height_to_right)−height[𝑖]
+max_height_to_left = tallest bar to the left of i (including i)
+max_height_to_right = tallest bar to the right of i (including i)
+If this value is positive, it contributes to trapped water. Otherwise, no water is trapped at that position.
+
+Code
+class Solution {
+    public int trap(int[] height) {
+        int n=height.length;
+        int[] leftMax=new int[n];
+        int[] rightMax=new int[n];
+        int water=0;
+        leftMax[0]=height[0];
+        rightMax[n-1]=height[n-1]; 
+        for(int i=1;i<n;i++)
+        {
+            leftMax[i]=Math.max(leftMax[i-1],height[i]);
+        }
+        for(int i=n-2;i>=0;i--)
+        {
+            rightMax[i]=Math.max(rightMax[i+1],height[i]);
+        }
+        for(int i=0;i<n;i++)
+        {
+            int level=Math.min(leftMax[i],rightMax[i]);
+            water+=level-height[i];
+        }
+        return water;
+    }
+}
+
+Code Summary
+The Java code calculates how much water is trapped between bars after raining. It uses the Dynamic Programming approach:
+Precompute maximum heights:
+leftMax[i] = tallest bar from the left up to index i.
+rightMax[i] = tallest bar from the right up to index i.
+Compute water trapped at each bar:
+Water above bar i = min(leftMax[i], rightMax[i]) - height[i].
+Add it to the total water.
+Return total water after checking all bars.
+
+Time Complexity: 
+O(n) → one pass for leftMax, one pass for rightMax, one pass for water calculation.
+
+Space Complexity: 
+O(n) → for storing leftMax and rightMax arrays.
+
+
+Largest Rectangle in Histogram
+----------------------------------------------------------------------------
+Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, 
+return the area of the largest rectangle in the histogram.
+
+Problem Explanation
+You are given an array of integers:
+heights = [h0, h1, h2, ..., hn-1]
+Each integer represents the height of a vertical bar in a histogram.
+Each bar has width = 1 unit.
+You need to find the largest rectangular area that can be formed using consecutive bars in the histogram.
+
+How Largest Rectangle Works
+To find the largest rectangle at any position, think like this:
+For bar at index i, the rectangle can extend left and right until a bar shorter than height[i] is reached.
+The width of the rectangle = distance between first smaller bar on the left and first smaller bar on the right, minus 1.
+The area of the rectangle = height[i] × width.
+
+
+Code
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int n=heights.length;
+        int[] ns=nse(heights,n);
+        int[] ps=pse(heights,n);
+        int max=0;
+        for(int i=0;i<n;i++)
+        {
+            int area=(ns[i]-ps[i]-1)*heights[i];
+            max=Math.max(area,max);
+        }
+        return max;
+    }
+    public int[] nse(int[] heights, int n)
+    {
+        int[] ns=new int[n];
+        Arrays.fill(ns,n);
+        Stack<Integer> wa=new Stack<>();
+        for(int i=0;i<n;i++)
+        {
+            while(!wa.isEmpty() && heights[i]<heights[wa.peek()])
+            ns[wa.pop()]=i;
+        
+        wa.push(i);
+        }
+        return ns;
+    }
+
+    public int[] pse(int[] heights, int n)
+    {
+        int[] ps=new int[n];
+        Arrays.fill(ps,-1);
+        Stack<Integer> wa=new Stack<>();
+        for(int i=n-1;i>=0;i--)
+        {
+            while(!wa.isEmpty() && heights[i]<heights[wa.peek()])
+            ps[wa.pop()]=i;
+        
+        wa.push(i);
+        }
+        return ps;
+    }
+}
+
+Code Summary
+Compute Next Smaller Element (NSE) for each bar → gives right boundary.
+Compute Previous Smaller Element (PSE) for each bar → gives left boundary.
+For each bar:
+Width = distance between right and left smaller bars.
+Area = width × height
+Update max area.
+Return largest rectangle area.
+
+Time Complexity
+Computing NSE → O(n)
+Computing PSE → O(n)
+Computing areas → O(n)
+Total: O(n)
+✅ Each bar is pushed and popped at most once in stack operations.
+
+Space Complexity
+ns[] → O(n)
+ps[] → O(n)
+stack → O(n)
+Total: O(n)
