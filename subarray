@@ -1,1 +1,1332 @@
+📌 What is a Subarray?
+🔹 Definition:
 
+A subarray is a contiguous (continuous) part of an array.
+
+👉 Contiguous means: elements must be next to each other in the original array.
+
+🔹 Example:
+Array: [1, 2, 3]
+
+✅ Subarrays:
+
+[1]
+
+[2]
+
+[3]
+
+[1, 2]
+
+[2, 3]
+
+[1, 2, 3]
+
+❌ Not Subarrays:
+
+[1, 3] ❌ (not continuous)
+
+📌 How to Find All Subarrays?
+🔹 Basic Idea:
+
+Fix a starting index
+
+Extend the ending index
+
+Every continuous range is a subarray
+
+🔹 Method 1: Using Two Loops (Brute Force)
+🔹 Logic:
+
+First loop → choose starting index i
+
+Second loop → choose ending index j
+
+Elements from i to j form a subarray
+
+🔹 Code (Java):
+int[] arr = {1, 2, 3};
+
+for (int i = 0; i < arr.length; i++) {
+    for (int j = i; j < arr.length; j++) {
+        for (int k = i; k <= j; k++) {
+            System.out.print(arr[k] + " ");
+        }
+        System.out.println();
+    }
+}
+
+🔹 Time Complexity:
+
+O(n³) (printing elements)
+
+📌 Counting Number of Subarrays (Formula)
+
+If array length = n
+
+🔹 Total subarrays:
+𝑛
+(
+𝑛
++
+1
+)
+2
+2
+n(n+1)
+	​
+
+🔹 Example:
+n = 3
+Total subarrays = 3 × 4 / 2 = 6
+
+📌 How to Find Subarrays with a Condition?
+
+Examples:
+
+Subarray sum = 0
+
+Subarray sum = K
+
+Subarray with maximum sum
+
+🔹 Brute Force Approach:
+
+Generate all subarrays
+
+Check condition for each
+
+🔹 Code Skeleton:
+for (int i = 0; i < n; i++) {
+    int sum = 0;
+    for (int j = i; j < n; j++) {
+        sum += arr[j];
+
+        if (sum == K) {
+            // valid subarray
+        }
+    }
+}
+
+🔹 Time Complexity:
+
+O(n²)
+
+📌 Why Brute Force is NOT Good?
+
+Too slow for large inputs
+
+Leads to TLE (Time Limit Exceeded)
+
+👉 That’s why we use:
+
+🔥 Prefix Sum + HashMap
+📌 Mind Map Summary (Perfect Short Points)
+
+Subarray = continuous part of array
+
+Order matters
+
+Total subarrays = n(n+1)/2
+
+Brute force → O(n²) / O(n³)
+
+Optimized using Prefix Sum + Map
+
+
+📌 Counting Subarrays using Map
+🔹 Problem 1: Count total subarrays whose sum = 0
+🔹 Problem 2: Count total subarrays whose sum = K
+
+👉 Both are solved using the same concept: Prefix Sum + HashMap
+
+🔹 Why do we use Map here?
+
+To store prefix sums
+
+To count how many times a prefix sum has appeared
+
+This helps us find subarrays in O(n) instead of O(n²)
+
+🧠 Core Concept: Prefix Sum
+🔹 What is Prefix Sum?
+
+Prefix Sum at index i = sum of elements from index 0 to i
+
+Example:
+
+arr = [1, -1, 2, -2, 3]
+
+Prefix Sum:
+index:      0   1   2   3   4
+prefixSum:  1   0   2   0   3
+
+📌 CASE 1: Count Subarrays with Sum = 0
+🔹 Key Idea:
+
+If the same prefix sum appears again,
+👉 the elements between them form a subarray with sum 0
+
+🔹 Algorithm (Logic):
+
+Initialize sum = 0
+
+Use a HashMap<sum, frequency>
+
+Put (0, 1) initially → very important
+
+Traverse array:
+
+Add current element to sum
+
+If sum exists in map:
+
+Add its frequency to answer
+
+Update map with current sum
+
+🔹 Code (Java)
+public class SubarraySumZero {
+    public static int countSubarrays(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0;
+        int count = 0;
+
+        map.put(0, 1); // important
+
+        for (int num : arr) {
+            sum += num;
+
+            if (map.containsKey(sum)) {
+                count += map.get(sum);
+            }
+
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+
+        return count;
+    }
+}
+
+🔹 Dry Run Example:
+arr = [1, -1, 2, -2]
+
+prefix sums: 1, 0, 2, 0
+
+sum = 0 appears twice → subarrays with sum 0
+
+🔹 Time Complexity:
+
+O(n)
+
+🔹 Space Complexity:
+
+O(n)
+
+🔹 Summary:
+
+Same prefix sum → sum between them is 0
+
+Map stores frequency of prefix sums
+
+📌 CASE 2: Count Subarrays with Sum = K
+🔹 Key Idea:
+
+If
+
+currentPrefixSum - K exists in map
+
+
+👉 then a subarray with sum K exists
+
+🔹 Mathematical Explanation:
+prefixSum[j] - prefixSum[i] = K
+⇒ prefixSum[i] = prefixSum[j] - K
+
+🔹 Algorithm:
+
+Initialize sum = 0
+
+Use HashMap<sum, frequency>
+
+Put (0, 1) initially
+
+Traverse array:
+
+sum += current element
+
+If (sum - K) exists in map:
+
+add its frequency to count
+
+Update map
+
+🔹 Code (Java)
+public class SubarraySumK {
+    public static int countSubarrays(int[] arr, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0;
+        int count = 0;
+
+        map.put(0, 1); // important
+
+        for (int num : arr) {
+            sum += num;
+
+            if (map.containsKey(sum - k)) {
+                count += map.get(sum - k);
+            }
+
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+
+        return count;
+    }
+}
+
+🔹 Example:
+arr = [1, 2, 3]
+k = 3
+
+Subarrays:
+[1,2]
+[3]
+
+Answer = 2
+
+🔹 Time Complexity:
+
+O(n)
+
+🔹 Space Complexity:
+
+O(n)
+
+📌 Comparison (Mind Map Friendly)
+Case	Condition Checked
+Sum = 0	same prefix sum
+Sum = K	prefixSum - K
+📌 Final Mind Map Summary (1–2 lines)
+
+Use Prefix Sum + HashMap
+
+Map stores sum → frequency
+
+Reduces time from O(n²) → O(n)
+
+Used for:
+
+Subarray sum = 0
+
+Subarray sum = K
+
+
+📌 Finding LENGTH of Subarrays using Map + Prefix Sum
+
+We usually solve 2 very important problems:
+
+1️⃣ Longest subarray with sum = 0
+2️⃣ Longest subarray with sum = K
+
+👉 Key difference from counting:
+
+For length, we store the first index of a prefix sum
+
+For count, we store frequency
+
+🔹 Core Concept (Prefix Sum Recap)
+
+Prefix Sum at index i:
+
+prefixSum[i] = arr[0] + arr[1] + ... + arr[i]
+
+📌 CASE 1: Longest Subarray with Sum = 0
+🔹 Key Idea:
+
+If the same prefix sum appears again,
+👉 the subarray between them has sum = 0
+
+To get maximum length, we:
+
+Store the first occurrence index of each prefix sum
+
+🔹 Algorithm:
+
+Initialize sum = 0, maxLen = 0
+
+Use HashMap<sum, index>
+
+Put (0, -1) initially
+
+Traverse array:
+
+sum += arr[i]
+
+If sum exists in map:
+
+length = i - map.get(sum)
+
+update maxLen
+
+Else:
+
+store sum with index i
+
+🔹 Code (Java)
+public class LongestSubarraySumZero {
+    public static int longestSubarray(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0, maxLen = 0;
+
+        map.put(0, -1); // important
+
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+
+            if (map.containsKey(sum)) {
+                maxLen = Math.max(maxLen, i - map.get(sum));
+            } else {
+                map.put(sum, i); // store first occurrence
+            }
+        }
+
+        return maxLen;
+    }
+}
+
+🔹 Example Dry Run:
+arr = [1, -1, 2, -2, 3]
+
+prefix sums: 1, 0, 2, 0, 3
+
+sum = 0 at index 3
+length = 3 - (-1) = 4
+
+🔹 Time Complexity:
+
+O(n)
+
+🔹 Space Complexity:
+
+O(n)
+
+🔹 Summary:
+
+Same prefix sum → sum = 0
+
+Store first index only
+
+📌 CASE 2: Longest Subarray with Sum = K
+🔹 Key Idea:
+
+If
+
+prefixSum - K exists in map
+
+
+👉 subarray with sum K exists
+
+To get maximum length, store first occurrence index
+
+🔹 Algorithm:
+
+Initialize sum = 0, maxLen = 0
+
+Use HashMap<sum, index>
+
+Put (0, -1) initially
+
+Traverse array:
+
+sum += arr[i]
+
+If (sum - K) exists:
+
+length = i - map.get(sum - K)
+
+update maxLen
+
+If sum not in map:
+
+store sum with index
+
+🔹 Code (Java)
+public class LongestSubarraySumK {
+    public static int longestSubarray(int[] arr, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0, maxLen = 0;
+
+        map.put(0, -1); // important
+
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+
+            if (map.containsKey(sum - k)) {
+                maxLen = Math.max(maxLen, i - map.get(sum - k));
+            }
+
+            if (!map.containsKey(sum)) {
+                map.put(sum, i); // store first occurrence
+            }
+        }
+
+        return maxLen;
+    }
+}
+
+🔹 Example:
+arr = [1, 2, 3, 1, 1, 1, 1]
+k = 3
+
+Longest subarray: [1,1,1]
+Length = 3
+
+🔹 Time Complexity:
+
+O(n)
+
+🔹 Space Complexity:
+
+O(n)
+
+📌 Important Difference (VERY EXAM-IMPORTANT)
+Problem Type	Map Stores
+Count subarrays	frequency
+Longest length	first index
+📌 Final Mind Map Summary (Last Branch)
+
+Use Prefix Sum + HashMap
+
+Store sum → index
+
+Same sum → sum = 0
+
+sum − K → sum = K
+
+Time: O(n)
+
+
+
+📌 Range Sum Queries (River Problem)
+🔹 Problem Description
+
+You are given:
+
+An array of size N (initially all 0s or given)
+
+Q queries
+
+Each query contains:
+
+i → starting index
+
+j → ending index (inclusive)
+
+x → value to be added
+
+For every query:
+
+Add x to all elements from index i to j
+
+After processing all queries:
+
+Find the maximum element in the array
+
+🔹 Why is it called River Problem?
+
+Each query is like pouring water (x) into a range of river beds
+
+Final water level at each index is found after all pours
+
+We need the highest water level (max value)
+
+📌 Brute Force Approach
+🔹 Idea
+
+For every query:
+
+Loop from i to j
+
+Add x to each element
+
+🔹 Code (Brute Force)
+int[] arr = new int[n];
+
+while (q-- > 0) {
+    int i, j, x;
+    // read i, j, x
+
+    for (int k = i; k <= j; k++) {
+        arr[k] += x;
+    }
+}
+
+// find max
+int max = Integer.MIN_VALUE;
+for (int val : arr) {
+    max = Math.max(max, val);
+}
+
+🔹 Time Complexity:
+
+O(Q × N) → ❌ TLE for large inputs
+
+🔹 Space Complexity:
+
+O(N)
+
+🔹 Problem with Brute Force
+
+Too slow when:
+
+N and Q are large
+
+Hence we need an optimized approach
+
+📌 Optimized Approach: Prefix Sum / Difference Array
+
+👉 THIS IS THE MAIN CONCEPT
+
+🔹 Key Idea (Difference Array)
+
+Instead of updating the full range:
+
+Add x at index i
+
+Subtract x at index j + 1
+
+Later, take prefix sum to get final values.
+
+🔹 Why does this work?
+
+Prefix sum spreads the effect of x
+
+Update cost becomes O(1) per query
+
+📌 Algorithm (Step-by-Step)
+
+Create an array diff[] of size n + 1, initialize with 0
+
+For each query (i, j, x):
+
+diff[i] += x
+
+diff[j + 1] -= x
+
+Build final array using prefix sum
+
+Find maximum element
+
+📌 Optimized Code (Java)
+int[] diff = new int[n + 1];
+
+// process queries
+while (q-- > 0) {
+    int i, j, x;
+    // read i, j, x
+
+    diff[i] += x;
+    if (j + 1 < n)
+        diff[j + 1] -= x;
+}
+
+// prefix sum + max
+int max = Integer.MIN_VALUE;
+int current = 0;
+
+for (int i = 0; i < n; i++) {
+    current += diff[i];
+    max = Math.max(max, current);
+}
+
+System.out.println(max);
+
+📌 Dry Run (Very Important for Mind Map)
+Given:
+n = 7
+Queries:
+(2, 5, 3)
+(0, 1, 2)
+(3, 6, -1)
+
+Step 1: diff array
+Index:  0  1  2  3  4  5  6  7
+diff:   2  0  3  0  0  0 -1 -4
+
+Step 2: Prefix Sum
+Final array:
+[2, 2, 5, 5, 5, 5, 4]
+
+Step 3: Max
+Max = 5
+
+📌 Time & Space Complexity
+🔹 Time Complexity:
+
+Queries → O(Q)
+
+Prefix sum → O(N)
+
+Total: O(Q + N) ✅
+
+🔹 Space Complexity:
+
+O(N)
+
+📌 Comparison (Mind Map Branch)
+Approach	Time
+Brute Force	O(Q × N) ❌
+Prefix Sum	O(Q + N) ✅
+📌 Final Mind Map Summary (1–2 Lines)
+
+Use Difference Array + Prefix Sum
+
+Range update in O(1)
+
+Final array via prefix sum
+
+Used in River / Range Sum problems
+
+
+
+📌 Two Pointer Approach (DSA Concept)
+🔹 What is Two Pointer Approach?
+
+A technique where we use two indices (pointers) to traverse a data structure.
+
+Usually applied on sorted arrays or lists.
+
+Helps reduce time complexity from O(n²) → O(n).
+
+🔹 Why Two Pointers?
+
+Efficient searching
+
+Avoid nested loops
+
+Used in:
+
+Two Sum
+
+Intersection
+
+Union
+
+Removing duplicates
+
+Pair problems
+
+🔹 Types of Two Pointers
+
+Opposite direction
+
+i = 0, j = n - 1
+
+Same direction
+
+i = 0, j = 0
+
+📌 Problem 1: Two Sum Exists? (Using Two Pointers)
+🔹 Problem Statement
+
+Given an array and a target value, check if any two elements sum up to the target.
+
+🔹 Key Condition
+
+Array must be sorted
+
+If not sorted → sort first
+
+🔹 Algorithm
+
+Sort the array
+
+Initialize:
+
+i = 0
+
+j = n - 1
+
+While i < j:
+
+If arr[i] + arr[j] == target → return true
+
+If sum < target → i++
+
+If sum > target → j--
+
+Return false
+
+🔹 Code (Java)
+public static boolean twoSum(int[] arr, int target) {
+    Arrays.sort(arr);
+
+    int i = 0, j = arr.length - 1;
+
+    while (i < j) {
+        int sum = arr[i] + arr[j];
+
+        if (sum == target) {
+            return true;
+        } else if (sum < target) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+    return false;
+}
+
+🔹 Time Complexity
+
+Sorted array: O(n)
+
+Unsorted array: O(n log n) + O(n)
+
+📌 Problem 2: Intersection of Two Sorted Arrays
+🔹 Definition
+
+Intersection contains common elements in both arrays
+👉 No duplicates allowed
+
+🔹 Algorithm
+
+Use two pointers i, j
+
+Compare a[i] and b[j]
+
+If equal:
+
+Add to answer (if not duplicate)
+
+Move both pointers
+
+If a[i] < b[j] → i++
+
+Else → j++
+
+🔹 Code (Java)
+public static List<Integer> intersection(int[] a, int[] b) {
+    List<Integer> ans = new ArrayList<>();
+    int i = 0, j = 0;
+
+    while (i < a.length && j < b.length) {
+        if (a[i] == b[j]) {
+            if (ans.size() == 0 || ans.get(ans.size() - 1) != a[i]) {
+                ans.add(a[i]);
+            }
+            i++;
+            j++;
+        } else if (a[i] < b[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+    return ans;
+}
+
+🔹 Time Complexity
+O(N + M)
+
+📌 Problem 3: Union of Two Sorted Arrays
+🔹 Definition
+
+Union contains all unique elements from both arrays.
+
+🔹 Algorithm
+
+Use two pointers i, j
+
+Add smaller element (avoid duplicates)
+
+If both equal → add once, move any pointer
+
+Add remaining elements
+
+🔹 Code (Java)
+public static List<Integer> union(int[] a, int[] b) {
+    List<Integer> ans = new ArrayList<>();
+    int i = 0, j = 0;
+
+    while (i < a.length && j < b.length) {
+        if (a[i] <= b[j]) {
+            if (ans.size() == 0 || ans.get(ans.size() - 1) != a[i]) {
+                ans.add(a[i]);
+            }
+            i++;
+        } else {
+            if (ans.size() == 0 || ans.get(ans.size() - 1) != b[j]) {
+                ans.add(b[j]);
+            }
+            j++;
+        }
+    }
+
+    while (i < a.length) {
+        if (ans.get(ans.size() - 1) != a[i]) {
+            ans.add(a[i]);
+        }
+        i++;
+    }
+
+    while (j < b.length) {
+        if (ans.get(ans.size() - 1) != b[j]) {
+            ans.add(b[j]);
+        }
+        j++;
+    }
+
+    return ans;
+}
+
+🔹 Time Complexity
+O(N + M)
+
+📌 Final Mind Map Summary
+
+Two Pointer = two indices
+
+Works best on sorted arrays
+
+Reduces time complexity
+
+Used in:
+
+Two Sum
+
+Intersection
+
+Union
+
+
+📌 1️⃣ What is a Subarray?
+🔹 Definition
+
+A subarray is a contiguous part of an array.
+
+Elements must be continuous in index.
+
+Example:
+Array: [1, 2, 3, 4]
+
+Subarrays:
+[1], [2], [3], [4]
+[1,2], [2,3], [3,4]
+[1,2,3], [2,3,4]
+[1,2,3,4]
+
+
+❌ [1,3] is NOT a subarray (not continuous)
+
+📌 2️⃣ What is a Substring?
+🔹 Definition
+
+A substring is a contiguous part of a string.
+
+Example:
+String: "abc"
+
+Substrings:
+"a", "b", "c"
+"ab", "bc"
+"abc"
+
+
+❌ "ac" is NOT a substring
+
+🔹 Difference (Exam-Important)
+Concept	Used On	Continuous?
+Subarray	Array	✅ Yes
+Substring	String	✅ Yes
+📌 3️⃣ What is Sliding Window Technique?
+🔹 Definition
+
+Sliding Window is an optimization technique used to process subarrays / substrings efficiently.
+
+Instead of recalculating from scratch, we:
+
+Expand window → add element
+
+Shrink window → remove element
+
+🔹 Why Sliding Window?
+
+Avoids nested loops
+
+Reduces time from O(n²) → O(n)
+
+🔹 Types of Sliding Window
+
+1️⃣ Fixed size window
+2️⃣ Variable size window
+
+📌 4️⃣ Segment with Small Sum (sum ≤ K)
+
+👉 Array must contain ONLY positive numbers
+
+🔹 A) Longest Subarray with Sum ≤ K
+🔹 Idea
+
+Expand window using e
+
+If sum > K → shrink from s
+
+Track maximum length
+
+🔹 Code (Length)
+int segmentWithSmallSum(int[] arr, int k) {
+    int sum = 0, s = 0, len = 0;
+
+    for (int e = 0; e < arr.length; e++) {
+        sum += arr[e];
+
+        while (sum > k) {
+            sum -= arr[s];
+            s++;
+        }
+
+        len = Math.max(len, e - s + 1);
+    }
+    return len;
+}
+
+🔹 Time Complexity
+O(N)
+
+🔹 Space Complexity
+O(1)
+
+🔹 B) Count of Subarrays with Sum ≤ K
+🔹 Key Observation
+
+If window [s…e] is valid,
+then all subarrays ending at e starting from s are valid.
+
+Count added:
+
+e - s + 1
+
+🔹 Code (Count)
+int countSubarraysSmallSum(int[] arr, int k) {
+    int sum = 0, s = 0;
+    int count = 0;
+
+    for (int e = 0; e < arr.length; e++) {
+        sum += arr[e];
+
+        while (sum > k) {
+            sum -= arr[s];
+            s++;
+        }
+
+        count += (e - s + 1);
+    }
+    return count;
+}
+
+📌 5️⃣ Segment with Big Sum (sum ≥ K)
+
+👉 Array must contain ONLY positive numbers
+
+🔹 A) Shortest Subarray with Sum ≥ K
+🔹 Idea
+
+Expand window until sum ≥ K
+
+Shrink window to minimize length
+
+🔹 Code (Length)
+int segmentWithBigSum(int[] arr, int k) {
+    int sum = 0, s = 0;
+    int minLen = Integer.MAX_VALUE;
+
+    for (int e = 0; e < arr.length; e++) {
+        sum += arr[e];
+
+        while (sum >= k) {
+            minLen = Math.min(minLen, e - s + 1);
+            sum -= arr[s];
+            s++;
+        }
+    }
+    return minLen == Integer.MAX_VALUE ? 0 : minLen;
+}
+
+🔹 Time Complexity
+O(N)
+
+🔹 B) Count of Subarrays with Sum ≥ K
+
+⚠️ Sliding window does NOT work directly for count
+→ Needs Prefix Sum + Binary Search / Map
+
+(That’s why your sir usually separates length and count cases.)
+
+📌 6️⃣ Sliding Window on Substring
+
+(Longest substring with at most K distinct characters)
+
+🔹 Idea
+
+Use Map<Character, Frequency>
+
+Expand window
+
+If distinct chars > K → shrink window
+
+🔹 Code (Already correct in your notes)
+int longestSubstringKDistinct(String str, int k) {
+    Map<Character, Integer> map = new HashMap<>();
+    int s = 0, len = 0;
+
+    for (int e = 0; e < str.length(); e++) {
+        char c = str.charAt(e);
+        map.put(c, map.getOrDefault(c, 0) + 1);
+
+        while (map.size() > k) {
+            char cs = str.charAt(s);
+            map.put(cs, map.get(cs) - 1);
+            if (map.get(cs) == 0) map.remove(cs);
+            s++;
+        }
+
+        len = Math.max(len, e - s + 1);
+    }
+    return len;
+}
+
+📌 Final Mind Map Summary (Very Important)
+
+Subarray / Substring → continuous
+
+Sliding Window → expand + shrink
+
+Small Sum (≤ K):
+
+Longest length
+
+Count = e - s + 1
+
+Big Sum (≥ K):
+
+Shortest length
+
+Works only for positive numbers
+
+Important Patterns given by Sir
+
+📌 Sliding Window – Important Patterns (Your Page Topics)
+1️⃣ Fixed Window Size
+🔹 What is Fixed Window?
+
+Window size is constant (K)
+
+We slide the window one step at a time
+
+🔹 Used for:
+
+Maximum / Minimum
+
+Sum
+
+Unique count
+of each window of size K
+
+🔹 Example:
+Array = [1, 2, 3, 4, 5]
+K = 3
+
+Windows:
+[1,2,3] → sum
+[2,3,4] → sum
+[3,4,5] → sum
+
+🔹 Fixed Window Code (Sum of each window)
+int windowSum(int[] arr, int k) {
+    int sum = 0;
+
+    for (int i = 0; i < k; i++) {
+        sum += arr[i];
+    }
+
+    for (int i = k; i < arr.length; i++) {
+        sum += arr[i];
+        sum -= arr[i - k];
+    }
+
+    return sum;
+}
+
+🔹 Time Complexity
+O(N)
+
+2️⃣ Sliding Window (Variable Size)
+🔹 What is Variable Window?
+
+Window size changes dynamically
+
+Uses two pointers:
+
+s → start
+
+e → end
+
+🔹 Used for:
+
+at most K
+
+less than or equal to K
+
+greater than or equal to K
+
+3️⃣ Length of the Longest Substring with At Most K Distinct Characters
+🔹 Key Idea
+
+“At most K” → sliding window
+
+Use Map to track frequency
+
+🔹 Logic
+
+Expand window (e)
+
+Add character to map
+
+If map size > K → shrink from s
+
+Track maximum length
+
+🔹 Code
+int longestSubstringAtMostK(String str, int k) {
+    Map<Character, Integer> map = new HashMap<>();
+    int s = 0, len = 0;
+
+    for (int e = 0; e < str.length(); e++) {
+        char c = str.charAt(e);
+        map.put(c, map.getOrDefault(c, 0) + 1);
+
+        while (map.size() > k) {
+            char cs = str.charAt(s);
+            map.put(cs, map.get(cs) - 1);
+            if (map.get(cs) == 0) map.remove(cs);
+            s++;
+        }
+
+        len = Math.max(len, e - s + 1);
+    }
+    return len;
+}
+
+🔹 Time Complexity
+O(N)
+
+4️⃣ Count of Subarrays with Sum ≤ K
+
+⚠️ Works only for positive numbers
+
+🔹 Key Observation (VERY IMPORTANT)
+
+If window [s…e] has sum ≤ K,
+then all subarrays ending at e starting from s are valid.
+
+So we add:
+
+count += (e - s + 1)
+
+🔹 Code
+int countSubarraysAtMostK(int[] arr, int k) {
+    int sum = 0, s = 0, count = 0;
+
+    for (int e = 0; e < arr.length; e++) {
+        sum += arr[e];
+
+        while (sum > k) {
+            sum -= arr[s];
+            s++;
+        }
+
+        count += (e - s + 1);
+    }
+    return count;
+}
+
+🔹 Time Complexity
+O(N)
+
+5️⃣ Count of Subarrays with Sum = K
+🔹 Trick You Wrote (Correct ✅)
+count(≤ K) - count(≤ K-1) = count(= K)
+
+🔹 Code
+int countEqualK(int[] arr, int k) {
+    return countSubarraysAtMostK(arr, k)
+         - countSubarraysAtMostK(arr, k - 1);
+}
+
+🔹 Why this works?
+
+Sliding window easily counts ≤ K
+
+Exact K is obtained by subtraction
+
+6️⃣ Segment with Small Sum
+🔹 Meaning
+
+Find longest subarray with sum ≤ K
+
+🔹 Code (Length)
+int longestSmallSum(int[] arr, int k) {
+    int sum = 0, s = 0, len = 0;
+
+    for (int e = 0; e < arr.length; e++) {
+        sum += arr[e];
+
+        while (sum > k) {
+            sum -= arr[s];
+            s++;
+        }
+
+        len = Math.max(len, e - s + 1);
+    }
+    return len;
+}
+
+7️⃣ Segment with Big Sum
+🔹 Meaning
+
+Find shortest subarray with sum ≥ K
+
+🔹 Code (Length)
+int shortestBigSum(int[] arr, int k) {
+    int sum = 0, s = 0;
+    int minLen = Integer.MAX_VALUE;
+
+    for (int e = 0; e < arr.length; e++) {
+        sum += arr[e];
+
+        while (sum >= k) {
+            minLen = Math.min(minLen, e - s + 1);
+            sum -= arr[s];
+            s++;
+        }
+    }
+    return minLen == Integer.MAX_VALUE ? 0 : minLen;
+}
+
+8️⃣ Final Mind-Map Summary (EXACTLY WHAT TO REMEMBER)
+
+Fixed window → size constant
+
+Variable window → expand + shrink
+
+At most K → sliding window
+
+Exactly K →
+count(≤K) - count(≤K-1)
+
+Small sum → longest length
+
+Big sum → shortest length
+
+Sliding window works only for positive numbers
