@@ -1,1 +1,150 @@
+📌 SET (Java – DSA Concept)
+🔹 What is Set?
 
+Set is an interface in Java (part of Collection Framework).
+
+It does not allow duplicate elements.
+
+It stores only unique elements.
+
+Syntax:
+Set<Integer> st = new HashSet<>();
+// or
+Set<Integer> st = new LinkedHashSet<>();
+// or
+Set<Integer> st = new TreeSet<>();
+
+🔹 Why do we use Set?
+
+By using Set, we can:
+
+✅ Find unique elements
+
+🔍 Search elements efficiently
+
+❌ Remove duplicates automatically
+
+🔢 Sort elements (using TreeSet)
+
+👉 This line is very important for your mind map.
+
+📌 Types of Set
+1️⃣ HashSet
+🔹 Properties:
+
+Does NOT follow any order
+
+Stores elements based on hashing
+
+Fastest among all Set implementations
+
+🔹 Time Complexity:
+
+add() → O(1) (average)
+
+contains() → O(1)
+
+remove() → O(1)
+
+🔹 Important Points:
+
+Order is random
+
+Allows only one null value
+
+Best when order doesn’t matter
+
+2️⃣ LinkedHashSet
+🔹 Properties:
+
+Maintains insertion order
+
+Internally implemented using:
+
+Hash table + Doubly Linked List
+
+🔹 Time Complexity:
+
+add() → O(1)
+
+contains() → O(1)
+
+remove() → O(1)
+
+🔹 Important Points:
+
+Slightly slower than HashSet
+
+Used when order of input matters
+
+3️⃣ TreeSet
+🔹 Properties:
+
+Stores elements in sorted order (Ascending)
+
+Internally implemented as:
+
+Balanced BST (Red-Black Tree)
+
+🔹 Time Complexity:
+
+add() → O(log n)
+
+contains() → O(log n)
+
+remove() → O(log n)
+
+🔹 Important Points:
+
+Does NOT allow null values
+
+Used when sorting is required
+
+📌 Common Set Methods
+➕ Adding an Element
+st.add(element);
+
+
+Return type: boolean
+
+Returns true → if element is added
+
+Returns false → if duplicate element
+
+🔍 Searching an Element
+st.contains(element);
+
+
+Return type: boolean
+
+Returns true if element exists
+
+❌ Removing an Element
+st.remove(element);
+
+
+Removes the given element if present
+
+🔢 Size of Set
+st.size();
+
+
+Returns total number of distinct elements
+
+📌 Key Summary (Perfect for Last Branch of Mind Map)
+
+Set stores unique elements only
+
+HashSet → Fastest, no order
+
+LinkedHashSet → Insertion order
+
+TreeSet → Sorted order
+
+Set helps in:
+
+Removing duplicates
+
+Searching elements
+
+Sorting data
