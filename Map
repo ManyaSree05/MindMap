@@ -1,1 +1,211 @@
+📌 MAP (Java – DSA Concept)
+🔹 What is Map?
 
+Map is a data structure that stores data in key–value pairs.
+
+Each key is unique, but values can be duplicate.
+
+Syntax:
+Map<Integer, Integer> mp = new HashMap<>();
+// or
+Map<Integer, Integer> mp = new LinkedHashMap<>();
+// or
+Map<Integer, Integer> mp = new TreeMap<>();
+
+🔹 Why do we use Map?
+
+By using Map, we can:
+
+🔢 Count frequency of elements
+
+🔍 Search keys efficiently
+
+❌ Avoid duplicate keys
+
+📊 Store data in key–value form
+
+🔢 Sort keys (using TreeMap)
+
+👉 This line is important for your mind map.
+
+📌 Types of Map
+1️⃣ HashMap
+🔹 Properties:
+
+Does NOT maintain any order
+
+Uses hashing
+
+Fastest Map implementation
+
+🔹 Time Complexity:
+
+put() → O(1) (average)
+
+get() → O(1)
+
+containsKey() → O(1)
+
+🔹 Important Points:
+
+Allows one null key
+
+Allows multiple null values
+
+Order is random
+
+2️⃣ LinkedHashMap
+🔹 Properties:
+
+Maintains insertion order
+
+Internally uses:
+
+Hash table + Doubly Linked List
+
+🔹 Time Complexity:
+
+put(), get() → O(1)
+
+3️⃣ TreeMap
+🔹 Properties:
+
+Maintains sorted order of keys (ascending)
+
+Internally implemented as:
+
+Red-Black Tree
+
+🔹 Time Complexity:
+
+put(), get() → O(log n)
+
+🔹 Important Points:
+
+Does NOT allow null keys
+
+Used when sorted keys are required
+
+📌 Counting Frequency of Elements (Code)
+🔹 Problem Description:
+
+Given an array, count the frequency of each element.
+
+🔹 Approach:
+
+Traverse the array
+
+If element exists → increase count
+
+Else → insert with count = 1
+
+🔹 Code (Using containsKey):
+Map<Integer, Integer> map = new HashMap<>();
+int[] arr = {1, 2, 2, 3, 1, 4};
+
+for (int num : arr) {
+    if (map.containsKey(num)) {
+        map.put(num, map.get(num) + 1);
+    } else {
+        map.put(num, 1);
+    }
+}
+
+System.out.println(map);
+
+🔹 Optimized Code (Using getOrDefault):
+Map<Integer, Integer> map = new HashMap<>();
+int[] arr = {1, 2, 2, 3, 1, 4};
+
+for (int num : arr) {
+    map.put(num, 1 + map.getOrDefault(num, 0));
+}
+
+System.out.println(map);
+
+🔹 Time Complexity:
+
+O(n)
+
+🔹 Space Complexity:
+
+O(n)
+
+📌 Count of DISTINCT Elements (IMPORTANT 🔥)
+✅ Method 1: Using Set (BEST & SIMPLE)
+🔹 Code:
+int[] arr = {1, 2, 2, 3, 1, 4};
+
+Set<Integer> set = new HashSet<>();
+for (int num : arr) {
+    set.add(num);
+}
+
+System.out.println(set.size());
+
+🔹 Explanation:
+
+Set stores only unique elements
+
+Size of set = count of distinct elements
+
+🔹 Time Complexity:
+
+O(n)
+
+🔹 Space Complexity:
+
+O(n)
+
+✅ Method 2: Using Map
+🔹 Code:
+Map<Integer, Integer> map = new HashMap<>();
+int[] arr = {1, 2, 2, 3, 1, 4};
+
+for (int num : arr) {
+    map.put(num, 1 + map.getOrDefault(num, 0));
+}
+
+System.out.println(map.size());
+
+🔹 Explanation:
+
+Keys are unique
+
+Number of keys = distinct count
+
+📌 Iterating Over Map
+🔹 Code:
+for (int key : map.keySet()) {
+    System.out.println(key + " : " + map.get(key));
+}
+
+📌 Important Notes (Very Exam-Useful)
+
+Keys are always unique
+
+Values can be duplicate
+
+Only one null key allowed (HashMap)
+
+remove(key) removes entire key-value pair
+
+Searching a key is easy and fast
+
+📌 Final Mind Map Summary (Last Branch)
+
+Map stores key–value pairs
+
+HashMap → fast, unordered
+
+LinkedHashMap → insertion order
+
+TreeMap → sorted keys
+
+Used for:
+
+Frequency count
+
+Distinct elements
+
+Fast searching
