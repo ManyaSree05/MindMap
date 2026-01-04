@@ -1,0 +1,111 @@
+Stack Applications – Nearest Element Problems
+a) Next Greater Element (NGE)
+b) Next Smaller Element (NSE)
+c) Previous Greater Element (PGE)
+d) Previous Smaller Element (PSE)
+--------------------------------------------------------------------------------------------------
+
+
+Problem Statement
+Given an array of integers, for every element find:
+Next Greater Element: nearest greater element on the right
+Next Smaller Element: nearest smaller element on the right
+Previous Greater Element: nearest greater element on the left
+Previous Smaller Element: nearest smaller element on the left
+If no such element exists, output -1.
+
+Approach / Idea
+Use a stack to maintain useful candidates.
+Stack helps remove unnecessary elements in O(1) amortized time.
+Traverse:
+Right → Left for Next problems
+Left → Right for Previous problems
+Pop elements that are not useful for comparison.
+
+Algorithm (High-Level Steps – Generic)
+Create an empty stack.
+Traverse the array in required direction.
+Pop elements from stack that violate condition.
+If stack is empty → answer = -1.
+Else → answer = stack.peek().
+Push current element into stack.
+
+Code
+a) Next Greater Element
+public static int[] nextGreater(int[] a) {
+    int n = a.length;
+    int[] res = new int[n];
+    Stack<Integer> st = new Stack<>();
+
+    for (int i = n - 1; i >= 0; i--) {
+        while (!st.isEmpty() && st.peek() <= a[i])
+            st.pop();
+
+        res[i] = st.isEmpty() ? -1 : st.peek();
+        st.push(a[i]);
+    }
+    return res;
+}
+
+b)Next Smaller Element
+public static int[] nextSmaller(int[] a) {
+    int n = a.length;
+    int[] res = new int[n];
+    Stack<Integer> st = new Stack<>();
+
+    for (int i = n - 1; i >= 0; i--) {
+        while (!st.isEmpty() && st.peek() >= a[i])
+            st.pop();
+
+        res[i] = st.isEmpty() ? -1 : st.peek();
+        st.push(a[i]);
+    }
+    return res;
+}
+
+c)Previous Greater Element
+public static int[] prevGreater(int[] a) {
+    int n = a.length;
+    int[] res = new int[n];
+    Stack<Integer> st = new Stack<>();
+
+    for (int i = 0; i < n; i++) {
+        while (!st.isEmpty() && st.peek() <= a[i])
+            st.pop();
+
+        res[i] = st.isEmpty() ? -1 : st.peek();
+        st.push(a[i]);
+    }
+    return res;
+}
+
+d) Previous Smaller Element
+public static int[] prevSmaller(int[] a) {
+    int n = a.length;
+    int[] res = new int[n];
+    Stack<Integer> st = new Stack<>();
+
+    for (int i = 0; i < n; i++) {
+        while (!st.isEmpty() && st.peek() >= a[i])
+            st.pop();
+
+        res[i] = st.isEmpty() ? -1 : st.peek();
+        st.push(a[i]);
+    }
+    return res;
+}
+
+Code Summary (What is Happening)
+Stack stores only useful elements.
+While traversing:
+Pop elements that cannot be answer.
+Top of stack gives nearest valid element.
+If stack becomes empty → no valid element exists.
+Push current element for future comparisons.
+
+Time Complexity
+O(N) for each problem
+Each element is pushed and popped only once.
+
+Space Complexity
+O(N) for stack in worst case.
