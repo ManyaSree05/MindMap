@@ -1,0 +1,139 @@
+#CONSTRAINTS 
+Constraints are rules or limits on data values that help decide:
+1.Which data type to use
+3.Which algorithm is efficient
+3.Whether overflow or errors may occur
+
+Types of Constraints:
+1.Range Constraint: Value must lie within given limits
+Example: 1 ≤ n ≤ 100000
+2.Size Constraint: Limit on size of array/string
+Example: Array size ≤ 1000
+3.Time Constraint: Code must execute within time limit
+Example: O(n), O(n log n)
+4.Space Constraint: Limit on memory usage
+5.Input Constraint: Input format restriction
+
+#JAVA PRIMITIVE DATA TYPES – SIZE & RANGE
+
+1.byte
+Size: 1 byte
+Range: -128 to 127
+2.short
+Size: 2 bytes
+Range: -32,768 to 32,767
+3.int
+Size: 4 bytes
+Range: -2^31 to (2^31 – 1)
+Approx: -2.1 × 10^9 to +2.1 × 10^9
+4.long
+Size: 8 bytes
+Range: -2^63 to (2^63 – 1)
+5.float
+Size: 4 bytes
+Precision: ~7 decimal digits
+6.double
+Size: 8 bytes
+Precision: ~15 decimal digits
+7.char
+Size: 2 bytes
+Range: 0 to 65,535 (Unicode)
+8.boolean
+Values: true or false
+Size: JVM dependent
+
+#CHOOSING DATA TYPE USING CONSTRAINTS
+
+If value ≤ 10^4 → int
+If value ≤ 10^9 → int
+If value ≤ 10^12 → long
+For decimal values → double
+For characters → char
+For true/false → boolean
+
+Using wrong data type may cause overflow.
+Eg:
+Overflow:
+int x = 2147483647;
+x = x + 1; // Output: -2147483648 (Overflow)
+Correct:
+long x = 2147483647L;
+
+#TYPE CASTING IN JAVA
+Type Casting means converting one data type into another.
+
+A) IMPLICIT TYPE CASTING (WIDENING)
+Automatic conversion
+Smaller data type → Larger data type
+No data loss
+
+Example:
+int a = 10;
+double b = a;
+
+Order:
+byte → short → int → long → float → double
+
+B) EXPLICIT TYPE CASTING (NARROWING)
+Manual conversion
+Larger data type → Smaller data type
+Data loss possible
+
+Example:
+double x = 9.8;
+int y = (int) x; // Output: 9
+
+#Common Mistakes:
+Integer Division:
+int a = 5, b = 2;
+double c = a / b; // Output: 2.0 (Wrong)
+Correct:
+double c = (double) a / b; // Output: 2.5
+
+char to int conversion:
+char c = 'A';
+int x = c; // Output: 65
+
+#Examples
+
+Q1. What will be the output?
+int a = 5;
+int b = 2;
+System.out.println(a / b);
+Answer: 2
+Explanation: Integer divided by integer results in integer (decimal part is ignored).
+
+Q2. What will be the output?
+System.out.println(10 + 20 + "30");
+Answer: 3030
+Explanation: 10 + 20 is evaluated first, then converted to String.
+
+Q3. What will be the output?
+int x = 2147483647;
+x = x + 1;
+System.out.println(x);
+Answer: -2147483648
+Explanation: Integer overflow occurs because value exceeds int range.
+
+Q4. What will be the output?
+byte b = 100;
+b = b + 10;
+System.out.println(b);
+Answer: Compilation Error
+Explanation: b + 10 is evaluated as int, cannot be assigned to byte without casting.
+
+Q5. What will be the output?
+long l = 1000 * 1000 * 1000;
+System.out.println(l);
+Answer: -727379968
+Explanation: Expression is evaluated as int first, causing overflow.
+Correct way:
+long l = 1000L * 1000 * 1000;
+
+#Summary
+
+Constraints help choose data type
+int overflows beyond ~2 billion
+Use long for large numbers
+Integer divided by integer gives integer result
+Default decimal data type is double
