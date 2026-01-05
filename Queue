@@ -53,3 +53,210 @@ Space Complexity
 
 O(N)
 In the worst case, the queue stores all nodes of the largest level.
+
+
+Reduce N to 1 (Minimum Operations)
+------------------------------------------------------------------
+Problem Statement
+Given a number n, find the minimum number of operations required to reduce it to 1.
+Allowed operations:
+If n % 2 == 0, then n = n / 2
+If n % 3 == 0, then n = n / 3
+n = n - 1
+
+Approach / Idea
+This is a shortest path problem.
+Each number is a node, and each operation is an edge with cost 1.
+Use Breadth First Search (BFS) since BFS always finds the minimum steps.
+Store (value, level) in queue, where level is number of operations.
+
+Algorithm (High-Level Steps)
+Create a queue of pairs (value, steps).
+Insert (n, 0) into the queue.
+While queue is not empty:
+Remove a pair.
+If value becomes 1, return steps.
+Apply valid operations and push new states into queue.
+BFS guarantees minimum operations.
+
+Code
+class Pair {
+    int val, lev;
+
+    public Pair(int v, int l) {
+        val = v;
+        lev = l;
+    }
+}
+
+public class Solution {
+
+    public int solve(int n) {
+
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(n, 0));
+
+        while (true) {
+
+            Pair p = q.remove();
+            int val = p.val;
+            int lev = p.lev;
+
+            if (val == 1)
+                return lev;
+
+            if (val % 2 == 0)
+                q.add(new Pair(val / 2, lev + 1));
+
+            if (val % 3 == 0)
+                q.add(new Pair(val / 3, lev + 1));
+
+            q.add(new Pair(val - 1, lev + 1));
+        }
+    }
+}
+
+Code Summary (What is Happening)
+BFS explores all possible reductions level by level.
+Each level represents one operation.
+When 1 is reached for the first time, BFS guarantees it is the minimum number of steps.
+Queue stores (current value, number of operations so far).
+
+Time Complexity
+O(N)
+Each number from n down to 1 is processed at most once.
+
+Space Complexity
+O(N)
+Queue may store multiple intermediate values.
+
+
+
+Burn a Tree
+-------------------------------------------------------
+Problem Statement
+Given a binary tree with root R and a target node L, the target node is set on fire.
+Fire spreads to all connected nodes (left child, right child, parent) in 1 second.
+Find the minimum time required to burn the entire binary tree.
+
+Approach / Idea
+Convert the tree into a graph-like structure by storing parent references.
+First, locate the target node.
+Then perform Breadth First Search (BFS) starting from the target node.
+Fire spreads level by level → each level takes 1 second.
+Use a visited set to avoid revisiting nodes.
+
+Algorithm (High-Level Steps)
+If root is null, return 0.
+Perform BFS from root to:
+Store parent of each node
+Identify the target node
+Start BFS from the target node.
+In each second:
+Burn left child, right child, and parent (if not visited).
+Increment time only if at least one new node burns.
+Continue until all nodes are burned.
+Return total time.
+
+Code
+class TreeNode {
+    int val;
+    TreeNode left, right;
+
+    TreeNode(int d) {
+        val = d;
+        left = right = null;
+    }
+}
+
+class BeingZero {
+
+    public int solve(TreeNode r, int l) {
+
+        if (r == null)
+            return 0;
+
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(r);
+
+        TreeNode start = null;
+
+        // Step 1: Map parent pointers and find target node
+        while (!q.isEmpty()) {
+            TreeNode node = q.remove();
+
+            if (node.val == l)
+                start = node;
+
+            if (node.left != null) {
+                parent.put(node.left, node);
+                q.add(node.left);
+            }
+
+            if (node.right != null) {
+                parent.put(node.right, node);
+                q.add(node.right);
+            }
+        }
+
+        if (start == null)
+            return 0;
+
+        // Step 2: Burn tree using BFS
+        Set<TreeNode> vis = new HashSet<>();
+        q.clear();
+        q.add(start);
+        vis.add(start);
+
+        int time = 0;
+
+        while (!q.isEmpty()) {
+            int n = q.size();
+            boolean burned = false;
+
+            for (int i = 0; i < n; i++) {
+                TreeNode curr = q.remove();
+
+                TreeNode par = parent.get(curr);
+                if (par != null && !vis.contains(par)) {
+                    vis.add(par);
+                    q.add(par);
+                    burned = true;
+                }
+
+                if (curr.left != null && !vis.contains(curr.left)) {
+                    vis.add(curr.left);
+                    q.add(curr.left);
+                    burned = true;
+                }
+
+                if (curr.right != null && !vis.contains(curr.right)) {
+                    vis.add(curr.right);
+                    q.add(curr.right);
+                    burned = true;
+                }
+            }
+
+            if (burned)
+                time++;
+        }
+        return time;
+    }
+}
+
+Code Summary (What is Happening)
+First BFS is used to store parent links and find the target node.
+Second BFS simulates fire spreading in all directions.
+Each BFS level corresponds to 1 second.
+burned flag ensures time increases only when fire spreads.
+visited set prevents revisiting nodes.
+Final time is the minimum time to burn the entire tree.
+
+Time Complexity
+O(N)
+Each node is visited at most once.
+
+Space Complexity
+O(N)
+Parent map, visited set, and queue storage.
