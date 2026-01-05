@@ -1,0 +1,177 @@
+Minimum Cost to Make Long Chain
+--------------------------------------------------
+Problem Statement
+Given an array of n integers, where a[i] represents the length of the i-th chain.
+The cost of merging two chains is equal to the sum of their lengths.
+Merge all chains into one single chain such that the total cost is minimum.
+
+Approach / Idea
+This is a Greedy problem.
+To minimize cost, always merge the two smallest chains first.
+A Min Heap / Priority Queue is used to efficiently get the smallest elements.
+This approach is similar to Huffman Coding.
+
+Algorithm (High-Level Steps)
+Insert all chain lengths into a min priority queue.
+Initialize ans = 0.
+While the priority queue has more than one element:
+Remove the two smallest elements.
+Add their sum to ans.
+Insert the sum back into the queue.
+Return ans.
+
+Code
+public int minCost(List<Integer> a) {
+
+    PriorityQueue<Integer> pq = new PriorityQueue<>();
+
+    // Insert all elements
+    for (int ele : a)
+        pq.add(ele);
+
+    int ans = 0;
+
+    while (pq.size() > 1) {
+
+        int x = pq.remove();
+        int y = pq.remove();
+
+        int cost = x + y;
+        ans += cost;
+
+        pq.add(cost);
+    }
+    return ans;
+}
+
+Code Summary (What is Happening)
+All chain lengths are stored in a min heap.
+Two smallest chains are merged first to keep cost minimum.
+The merged chain is reinserted for future merges.
+Accumulated cost is stored in ans.
+Final ans is the minimum total cost.
+Merging larger chains early increases cost.
+Greedy choice of smallest chains gives optimal result.
+Priority Queue ensures efficient selection.
+
+Time Complexity
+O(N log N)
+Each insertion and removal from priority queue costs log N.
+
+Space Complexity
+O(N)
+Priority queue stores up to N elements.
+
+
+Median of Stream of Numbers (Running Median)
+-----------------------------------------------------------------
+Problem Statement
+Given a stream of integers arriving one by one, print the median after each insertion.
+If number of elements is odd → median is the middle element
+If number of elements is even → median is the average of two middle elements
+Output median up to one decimal place
+
+Approach / Idea
+Maintain two heaps:
+Max Heap (left heap) → stores smaller half of numbers
+Min Heap (right heap) → stores larger half of numbers
+Balance the heaps so that size difference is at most 1
+Median:
+If both heaps are equal size → average of roots
+Else → root of larger heap
+
+Algorithm (High-Level Steps)
+Initialize:
+Max Heap l
+Min Heap r
+For each incoming number:
+Insert into appropriate heap
+Rebalance heaps if size difference > 1
+Compute median:
+If sizes equal → (l.peek + r.peek) / 2
+Else → root of larger heap
+Store median after each insertion.
+Return result array.
+
+Code
+class BeingZero {
+
+    public float[] solve(int A[], int n) {
+
+        List<Float> lst = new ArrayList<>();
+
+        PriorityQueue<Integer> l =
+                new PriorityQueue<>(Collections.reverseOrder()); // max heap
+        PriorityQueue<Integer> r =
+                new PriorityQueue<>(); // min heap
+
+        for (int val : A) {
+
+            float ans = 0;
+
+            if (l.isEmpty())
+                l.add(val);
+            else if (val > l.peek())
+                r.add(val);
+            else
+                l.add(val);
+
+            // Balance heaps
+            if (r.size() - l.size() > 1)
+                l.add(r.poll());
+            if (l.size() - r.size() > 1)
+                r.add(l.poll());
+
+            // Find median
+            if (l.size() == r.size())
+                lst.add((l.peek() + r.peek()) / 2.0f);
+            else {
+                if (l.size() > r.size())
+                    ans = l.peek();
+                else
+                    ans = r.peek();
+                lst.add(ans);
+            }
+        }
+
+        float[] arr = new float[lst.size()];
+        for (int i = 0; i < arr.length; i++)
+            arr[i] = lst.get(i);
+
+        return arr;
+    }
+}
+
+Code Summary (What is Happening)
+Max heap keeps the lower half of numbers.
+Min heap keeps the upper half.
+Heaps are balanced after every insertion.
+Median is calculated using heap tops.
+Result is stored after each new element arrives.
+
+Time Complexity
+O(N log N)
+Each insertion and balancing costs log N.
+
+Space Complexity
+O(N)
+Heaps together store all stream elements.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CC
