@@ -157,21 +157,350 @@ Space Complexity
 O(N)
 Heaps together store all stream elements.
 
+Meeting Rooms-1
+------------------------------------------------------------
+Problem Statement
+Given a list of meeting time intervals [[start₁, end₁], [start₂, end₂], ...], determine whether a person can attend all meetings without any conflicts.
+Each meeting has a start time and an end time.
+A meeting ending at time t and another starting at time t do not overlap.
+Example: (0,8) and (8,10) → No conflict
+Return true if all meetings can be attended, otherwise return false.
+
+Approach / Idea
+This is a Greedy + Sorting problem.
+To detect conflicts efficiently, sort meetings by their start time.
+After sorting, only adjacent meetings need to be checked.
+If the end time of one meeting is greater than the start time of the next meeting, a conflict exists.
+Greedy choice:
+Always compare each meeting with the immediately previous one after sorting.
+
+Algorithm (High-Level Steps)
+Sort all meeting intervals based on their start time.
+Traverse the sorted list from the second meeting.
+For each pair of consecutive meetings:
+If previous.end > current.start, return false (conflict found).
+If no conflicts are found, return true.
 
 
+Code
+public class Solution {
+    public boolean canAttendMeetings(List<Interval> intervals) {
+
+        // Sort intervals by start time
+        Collections.sort(intervals, Comparator.comparingInt(i -> i.start));
+
+        // Check for overlap
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval prev = intervals.get(i - 1);
+            Interval curr = intervals.get(i);
+
+            if (prev.end > curr.start) {
+                return false; // Conflict detected
+            }
+        }
+        return true; // No conflicts
+    }
+}
+
+Code Summary (What is Happening)
+Meetings are sorted based on their start time.
+Sorting ensures meetings are checked in chronological order.
+Each meeting is compared only with the previous one.
+If one meeting ends after the next meeting starts → overlap exists.
+Equal end and start times are allowed (no conflict).
+If all comparisons pass, meetings can be attended without conflict.
+Greedy strategy works because sorting ensures earliest meetings are checked first.
+
+Time Complexity
+O(N log N)
+Sorting N meetings takes O(N log N)
+Single traversal takes O(N)
+Overall: O(N log N)
+
+Space Complexity
+O(1) (Ignoring sorting space)
+No extra data structures used.
+Sorting may use internal stack space depending on implementation.
 
 
+Meeting rooms-2
+-------------------------------------------
+Problem Statement
+Given a list of meeting time intervals
+[[start₁, end₁], [start₂, end₂], ...]
+where startᵢ < endᵢ, find the minimum number of meeting rooms (or days) required so that all meetings can be scheduled without conflicts.
+Meetings ending at time t and starting at time t do not conflict.
+Example: (0,8) and (8,10) → No overlap
 
+Approach / Idea
+This is a Greedy + Min Heap (Priority Queue) problem.
+Key idea:
+Always assign a meeting to the room that gets free the earliest.
+A min heap is used to keep track of the earliest ending meeting.
+Greedy choice:
+If the earliest-ending room is free before the current meeting starts, reuse it; otherwise, allocate a new room.
 
+Algorithm (High-Level Steps)
+Sort all meeting intervals based on start time.
+Create a min heap to store end times of meetings currently using rooms.
+For each meeting:
+If the heap is not empty and the smallest end time ≤ current start:
+Remove that end time (room is freed).
+Add the current meeting’s end time to the heap.
+The size of the heap represents the number of rooms currently in use.
+After processing all meetings, return the heap size.
 
+Code
+public class Solution {
+    public int minMeetingRooms(List<Interval> intervals) {
 
+        // Sort meetings by start time
+        intervals.sort((a, b) -> a.start - b.start);
 
+        // Min heap to store end times
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
 
+        for (Interval interval : intervals) {
 
+            // If earliest ending meeting is done, reuse the room
+            if (!minHeap.isEmpty() && minHeap.peek() <= interval.start) {
+                minHeap.poll();
+            }
 
+            // Add current meeting end time
+            minHeap.offer(interval.end);
+        }
 
+        // Number of rooms required
+        return minHeap.size();
+    }
+}
 
+Code Summary (What is Happening)
+Meetings are sorted by start time.
+A min heap tracks end times of ongoing meetings.
+The smallest end time is always at the top of the heap.
+If a meeting ends before the next one starts, the room is reused.
+Otherwise, a new room is allocated.
+Heap size at the end equals the maximum number of overlapping meetings.
+That maximum overlap is the minimum number of rooms required.
 
+Time Complexity
+O(N log N)
+Sorting intervals → O(N log N)
+Each heap insertion/removal → O(log N)
+N meetings processed
 
+Space Complexity
+O(N)
+Min heap may store end times of up to N meetings.
 
-CC
+Meeting rooms 3
+--------------------------------------------------------------------
+Problem Statement
+You are given:
+An integer n representing n meeting rooms, numbered from 0 to n-1.
+A 2D array meetings, where
+meetings[i] = [startᵢ, endᵢ] denotes a meeting scheduled in the half-open interval [startᵢ, endᵢ).
+Rules for Allocating Meetings
+Each meeting is assigned to the unused room with the smallest room number.
+If no room is free, the meeting is delayed until a room becomes available.
+The delayed meeting keeps the same duration.
+When a room becomes free, meetings with earlier original start time get priority.
+Return the room number that hosted the most meetings.
+If multiple rooms tie, return the smallest room number.
+
+Approach / Idea
+This is a Greedy + Two Priority Queues problem.
+We manage:
+Free rooms → smallest room number first.
+Busy rooms → earliest finishing meeting first.
+Greedy idea:
+Always assign meetings to the earliest available room with the smallest index.
+
+Data Structures Used
+PriorityQueue<Integer> free--------->	Stores available rooms (min room number first)
+PriorityQueue<long[]> busy--------->	Stores [endTime, roomNumber] (earliest end first)
+int[] cnt-------->	Counts meetings per room
+
+Algorithm (High-Level Steps)
+Sort all meetings by start time.
+Initialize:
+free heap with all room numbers 0 → n-1.
+Empty busy heap.
+cnt[] to count meetings per room.
+For each meeting:
+Free all rooms whose meetings ended before or at current start time.
+If a room is free:
+Assign the meeting to the smallest available room.
+Else:
+Delay the meeting until the earliest finishing room becomes free.
+Update meeting count for the room.
+After processing all meetings:
+Return the room with the maximum meeting count.
+Break ties by choosing the smallest room number.
+
+Code
+class Solution {
+    public int mostBooked(int n, int[][] meetings) {
+
+        // Sort meetings by start time
+        Arrays.sort(meetings, (a, b) -> a[0] - b[0]);
+
+        // Free rooms (min room number first)
+        PriorityQueue<Integer> free = new PriorityQueue<>();
+
+        // Busy rooms (earliest ending meeting first)
+        PriorityQueue<long[]> busy = new PriorityQueue<>(
+            (a, b) -> a[0] == b[0] ? Long.compare(a[1], b[1]) : Long.compare(a[0], b[0])
+        );
+
+        int[] cnt = new int[n];
+
+        // Initially all rooms are free
+        for (int i = 0; i < n; i++) free.offer(i);
+
+        for (int[] m : meetings) {
+
+            long start = m[0];
+            long duration = m[1] - m[0];
+
+            // Free rooms that have completed meetings
+            while (!busy.isEmpty() && busy.peek()[0] <= start) {
+                free.offer((int) busy.poll()[1]);
+            }
+
+            if (!free.isEmpty()) {
+                // Assign meeting to free room
+                int room = free.poll();
+                busy.offer(new long[]{m[1], room});
+                cnt[room]++;
+            } else {
+                // Delay meeting
+                long[] x = busy.poll();
+                busy.offer(new long[]{x[0] + duration, x[1]});
+                cnt[(int) x[1]]++;
+            }
+        }
+
+        // Find room with maximum meetings
+        int ans = 0;
+        for (int i = 1; i < n; i++) {
+            if (cnt[i] > cnt[ans]) ans = i;
+        }
+        return ans;
+    }
+}
+
+Code Summary (What is Happening)
+Meetings are processed in chronological order.
+free heap ensures smallest room number is always chosen.
+busy heap ensures the earliest ending meeting is processed first.
+If all rooms are busy, the meeting is delayed to the earliest free time.
+Each room’s meeting count is tracked.
+The room with the highest count is returned.
+Tie is resolved by room number.
+
+Time Complexity
+O(M log N)
+Sorting meetings → O(M log M)
+Heap operations per meeting → O(log N)
+M = number of meetings
+
+Space Complexity
+O(N + M)
+Free rooms heap → O(N)
+Busy rooms heap → O(N)
+Meeting count array → O(N)
+
+Fractional Knapsack (Using Priority Queue)
+------------------------------------------------------------------------
+Problem Statement
+Given n items, each having a value and a weight, and a knapsack of capacity W, find the maximum total value that can be obtained by putting items into the knapsack.
+You are allowed to take fractions of items.
+Each item can be broken into smaller parts.
+Goal: maximize total value without exceeding capacity.
+
+Approach / Idea
+This is a Greedy Algorithm problem.
+Greedy choice:
+Always select the item with the highest value-to-weight ratio first.
+To efficiently get the item with the maximum ratio at each step, we use a Priority Queue (Max Heap).
+
+Algorithm (High-Level Steps)
+For each item, compute its value-to-weight ratio.
+Insert all items into a max priority queue based on the ratio.
+Initialize currentCapacity = W and totalValue = 0.
+While the priority queue is not empty and capacity > 0:
+Extract the item with the highest ratio.
+If item’s weight ≤ current capacity:
+Take the full item.
+Else:
+Take the fractional part that fits.
+Update total value and remaining capacity.
+Return totalValue.
+
+Code
+class Item {
+    int value, weight;
+    double ratio;
+
+    Item(int value, int weight) {
+        this.value = value;
+        this.weight = weight;
+        this.ratio = (double) value / weight;
+    }
+}
+
+public class Solution {
+
+    public double fractionalKnapsack(int W, int[] values, int[] weights, int n) {
+
+        // Max heap based on value/weight ratio
+        PriorityQueue<Item> pq = new PriorityQueue<>(
+            (a, b) -> Double.compare(b.ratio, a.ratio)
+        );
+
+        // Insert all items
+        for (int i = 0; i < n; i++) {
+            pq.offer(new Item(values[i], weights[i]));
+        }
+
+        double totalValue = 0.0;
+        int capacity = W;
+
+        while (!pq.isEmpty() && capacity > 0) {
+
+            Item curr = pq.poll();
+
+            if (curr.weight <= capacity) {
+                // Take full item
+                capacity -= curr.weight;
+                totalValue += curr.value;
+            } else {
+                // Take fractional part
+                totalValue += curr.ratio * capacity;
+                capacity = 0;
+            }
+        }
+        return totalValue;
+    }
+}
+
+Code Summary (What is Happening)
+Each item’s value-to-weight ratio is calculated.
+All items are stored in a max heap ordered by ratio.
+The item with the highest ratio is always chosen first.
+If capacity allows, the whole item is taken.
+Otherwise, only the required fraction is taken.
+This greedy choice guarantees maximum value.
+Priority Queue ensures efficient selection.
+
+Time Complexity
+O(N log N)
+Inserting N items into priority queue → O(N log N)
+Removing items → O(N log N)
+
+Space Complexity
+O(N)
+Priority queue stores all N items.
