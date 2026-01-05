@@ -1,0 +1,277 @@
+1. Find missing and repeated number:
+XOR all array elements and numbers from 1 to n → leftover is X ⊕ Y (repeated ⊕ missing).
+Find rightmost set bit in X ⊕ Y → helps to separate numbers into two groups.
+Divide numbers into two groups based on that bit and XOR within each group → results in X and Y.
+Check array to see which one is repeated → the other is missing.
+Time Complexity: O(n)
+Space Complexity: O(1)
+Code:
+ public static void findMissingAndRepeating(int[] arr, int n) {
+        int XOR_total = 0;
+        
+        // Step 1: Compute XOR of all array elements and numbers from 1 to n
+        for (int num : arr) {
+            XOR_total ^= num;
+        }
+        for (int i = 1; i <= n; i++) {
+           XOR_total ^= i;
+        }
+        
+        // Step 2: Find rightmost set bit
+        int rightmostSetBit = XOR_total & -XOR_total;
+        int zeroGroup = 0, oneGroup = 0;
+        
+        // Step 3: Divide numbers into two groups based on the rightmost set bit
+        for (int num : arr) {
+            if ((num & rightmostSetBit) != 0) {
+                oneGroup ^= num;
+            } else {
+                zeroGroup ^= num;
+            }
+        }
+        for (int i = 1; i <= n; i++) {
+            if ((i & rightmostSetBit) != 0) {
+                oneGroup ^= i;
+            } else {
+                zeroGroup ^= i;
+            }
+        }
+        
+        // Step 4: Identify missing and repeating numbers
+        int repeating = 0, missing = 0;
+        for (int num : arr) {
+            if (num == zeroGroup) {
+                repeating = zeroGroup;
+                missing = oneGroup;
+                break;
+            }
+        }
+        
+        if (repeating == 0) {
+            repeating = oneGroup;
+            missing = zeroGroup;
+        }
+        
+        System.out.println("Repeating Number: " + repeating);
+        System.out.println("Missing Number: " + missing);
+    }
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. Two Repeated Numbers:
+We can use bit manipulation to achieve the required goal. The idea is to use find the XOR of the repeating elements and then find the repeating elements.
+Because as we know that xor of same numbers will be 0 and xor of different numbers will result in a number. 
+Here we have to find two numbers which are repeated. If we xor all the values and separate them by checking the required bit position, we can know the repeated numbers.
+To find the XOR of repeating elements XOR all the elements of the array and then XOR that result with XOR of the first N natural numbers.
+Now, find the rightmost set bit of X^Y to divide the array on the basis of the rightmost set bit.
+Let’s say x = 0 and y = 0, XOR all the numbers in the array with x whose bit is set at the rightmost position of X^Y and those
+numbers whose bit is not set at that position then XOR those numbers with y.after this run a loop from 1 to N and check whose bit 
+is set at that rightmost position of X^Y then XOR that number with x, otherwise XOR the number with y.
+Time Complexity : O(n)
+Space Complexity : O(1)
+Code:
+class BeingZero {
+    public List<Integer> solve(int[] a, int n) {
+        int freq[] = new int[n + 1];
+
+        for (int num : a) {
+            if (num >= 1 && num <= n) {
+                freq[num]++;
+            }
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            if (freq[i] > 1) {
+                ans.add(i);
+            }
+        }
+
+        return ans;
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. Finding akela:
+Intuition:
+The problem of finding the unique element in an array where every other element appears exactly twice. One of the most efficient approaches is the XOR operation, which takes 
+advantage of the fact that a number XOR with itself results in zero (a ^ a = 0), and a number XOR with zero remains unchanged (a ^ 0 = a). Another way could be the sorting approach
+to find the unique element in an array where every other element appears exactly twice is based on the idea that duplicates will become adjacent when the array is sorted. Once sorted, 
+we can iterate through the array in steps of two(i = i+2), comparing each element to its neighbor. If an element does not have a matching neighbor, it is the unique element.
+Approach:
+If you look at the properties of XOR operation carefully, if you XOR two same elements then the output is 0 but if you take a XOR of the elements with 0 then the output is that element only.
+a^0 = a and a^a = 0. So the key idea here is that - If we XOR all the elements in the array:
+The duplicate elements will cancel each other out 
+The remaining result will be the unique element.
+Now let us understand a few concepts about Bitwise operator (XOR)  .
+Note : this is only for those who don't know about bitwise operator. If you are familiar with matrices please move ahead to the Analysis after this explanation and example .
+XOR operator -
+We know that bitwise operators work between 0s and 1s there are many such operators for different purposes XOR (^) is done as the follows
+Truth Table :
+----------------------
+ x   |   y   |   x ^ y
+----------------------
+  1   |   1   |     0
+  1   |   0   |     1
+  0   |   1   |     1
+  0   |   0   |     0
+----------------------
+Time Complexity - O(1)
+Space Complexity - O(1)
+Code:
+public long Solve(int n, int A[]) {
+    long ans = 0;
+    for(int ele : A) {
+        ans = ans ^ ele;
+    }
+    return ans;
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Conditions:
+Check bit: (num & (1 << pos)) != 0
+
+Set bit: num | (1 << pos)
+
+Clear bit: num & ~(1 << pos)
+
+Flip bit: num ^ (1 << pos)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4. Triple Trouble:
+The solution uses bit manipulation. For each bit position, it counts how many numbers have that bit set. Since all numbers except one appear three times, 
+the count of each bit will be a multiple of 3. The bits whose count is not divisible by 3 belong to the unique number, and combining these bits gives the final answer.
+Intuition
+For each bit position (0 to 63 for long):
+Count how many numbers have that bit set.
+Since all numbers appear 3 times except one,
+the count at each bit will be a multiple of 3 except for the unique number’s bits.
+If count % 3 == 1, that bit belongs to the answer.
+Why this works
+Each repeated element contributes 3 times to bit counts → disappears with % 3
+Only the unique element’s bits remain
+Uses only primitive variables → constant space
+Time & Space Complexity
+Time: O(64 × N) → O(N)
+Space: O(1)
+Code:
+public long solve(long A[]) {
+    long ans = 0;
+
+    for (int bit = 0; bit < 64; bit++) {
+        int count = 0;
+
+        for (long num : A) {
+            if (((num >> bit) & 1) == 1) {
+                count++;
+            }
+        }
+
+        if (count % 3 != 0) {
+            ans |= (1L << bit);
+        }
+    }
+
+    return ans;
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5. Power of 2/4/8/16 or not:
+Description:
+The solution uses bit manipulation to check whether the given number is one of the powers of 2: 2, 4, 8, or 16. 
+These values are generated using left shift (`1 << k`), which represents (2^k). The function compares the input number
+with these shifted values and returns `true` if a match is found; otherwise, it returns `false`.
+1 << n means shifting binary 1 left by n positions
+Each left shift multiplies the number by 2
+So:
+1 << 2 = 4
+1 << 3 = 8
+1 << 4 = 16
+General Formula
+powerOfTwo = 1 << n;   // gives 2ⁿ
+Code:
+class BeingZero {
+    public boolean solve(int n) {
+        // powers of 2 using bit manipulation
+        if (n <= 0) {
+            return false;
+        }
+
+        return n == (1 << 1) ||  // 2
+               n == (1 << 2) ||  // 4
+               n == (1 << 3) ||  // 8
+               n == (1 << 4);    // 16
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6. Generate all subset:
+Subset: A subset of an array is a tuple that can be obtained from the array by removing some (possibly none or all) elements of it.
+Example 1:
+Input: nums = [1, 2, 3]
+Output: [[ ], [1], [2], [3], [1, 2], [2, 3], [3, 1], [1, 2, 3]]
+
+Explanation: A power set of an array is an array of all possible subarrays, including an empty array. 
+It contains all combinations of elements from the original array. By iterating through all possible combinations 
+of the elements in the input array we are able to get the power set of the array.
+Intuition
+Observation: A bit can be either 0 or 1. What can we deduce from this?
+Since, each element has only two choices i.e. either get included or get excluded. Assign these choices to a bit representation such that:
+0 means Excluded
+1 means Included
+i’th bit represents i’th element of the array
+Now let’s say, there are n elements in the array. This array will have 2^n subsets. These subsets can be uniquely expressed in form of Bit representation of number from 0 to 2n - 1.
+Example: If elements in an array of size 2 = {A, B}
+All the subsets of this array form the bit representation of number from 0 to 22 -1 i.e. 0 to 3
+0 = 00 => A excluded, B excluded => { empty }
+1 = 01 => A excluded, B included => { B }
+2 = 10 => A included, B excluded => { A }
+3 = 11 => A included, B included=> { A, B }
+Code:
+public List<List<Integer>> generateAllSubset(List<Integer> nums) { 
+        int n = nums.size();
+        // Total subsets = 2^n
+        int subsets = 1 << n; 
+        List<List<Integer>> ans = new ArrayList<>();
+
+        // Iterate through all numbers from 0 to (2^n - 1)
+        for (int num = 0; num < subsets; num++) {
+            List<Integer> subset = new ArrayList<>();
+
+            // Check each bit position
+            for (int i = 0; i < n; i++) {
+                if ((num & (1 << i)) != 0) {
+                    subset.add(nums.get(i)); // Include nums[i] if the bit is set
+                }
+            }
+            ans.add(subset);
+        }
+        return ans;
+}
+
+Time Complexity: O(n x 2n) where n is the number of elements in the input array.
+Iterating through all possible numbers from 0 to 2n-1 where n is the number of elements in the input array requires O(2n) iterations.
+For each iteration, we perform O(n) operations to construct the corresponding subset by interpreting the bits of the number.
+Space Complexity: O(n x 2n) where n is the number of elements in the input array. We store all subsets in a list. 
+Since there are 2n subsets in the power set, each subset can have at most n elements.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+7. Unique multiples of 5 multipliers:
+Approach
+We want the first N multiples of 5:
+Any multiple of 5 can be written as : 5×k=(4+1)×k=(k<<2)+k
+Here, k << 2 is k * 4.
+Adding k gives k * 5.
+Generate unique multiples by iterating k = 1, 2, 3, ... N once each.
+Time complexity: O(N) — very efficient.
+Space complexity: O(1) if you just print, O(N) if you store in an array.
+Code:
+public class MultiplesOf5 {
+    public static void main(String[] args) {
+        int N = 10; // generate first 10 multiples of 5
+
+        for (int k = 1; k <= N; k++) {
+            int multipleOf5 = (k << 2) + k; // bit manipulation trick: 5*k
+            System.out.println(multipleOf5);
+        }
+    }
+}
