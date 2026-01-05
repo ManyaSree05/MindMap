@@ -1,0 +1,38 @@
+What is a Greedy Algorithm?
+A Greedy Algorithm is an algorithmic approach that makes the best possible choice at each step, hoping that these local optimal choices will lead to a globally optimal solution.
+
+👉 In simple words:
+“Take the best option available right now, without worrying about future consequences.”
+
+Key Characteristics
+Local Optimal Choice
+At every step, the algorithm chooses the option that seems best at that moment.
+
+No Backtracking
+Once a choice is made, it is never changed.
+
+Efficiency
+Greedy algorithms are usually fast and simple (often O(n) or O(n log n)).
+
+Correctness Depends on Problem
+Greedy works only for problems that satisfy:
+Greedy Choice Property
+Optimal Substructure
+
+Important Properties
+1. Greedy Choice Property
+A globally optimal solution can be achieved by making a locally optimal choice at each step.
+
+2. Optimal Substructure
+The optimal solution of the problem contains optimal solutions to its subproblems.
+
+General Steps of a Greedy Algorithm
+Sort or prioritize data (if needed).
+Make the best local decision.
+Reduce the problem size.
+
+Classic Problems Using Greedy Algorithm
+Activity Selection----->	Select activity with earliest finish time
+Fractional Knapsack----->	Choose item with highest value/weight
+
+Repeat until the problem is solved
