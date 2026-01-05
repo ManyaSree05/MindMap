@@ -1,0 +1,744 @@
+Morris Traversal:
+Morris Traversal is a method to traverse a binary tree without using recursion or a stack.
+It works by temporarily creating links (called threads) from a node’s inorder predecessor to the current node, allowing traversal in O(n) time and O(1) extra space.
+It is mainly used for inorder and preorder traversals and restores the tree after traversal.
+It avoids extra memory by reusing unused right pointers in a binary tree.
+When a node has a left child, its inorder predecessor is linked to the current node so we can return after visiting the left subtree.
+Each edge is visited at most twice, so time complexity stays O(n).
+After traversal, all temporary links are removed, and the original tree structure is restored.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+fph code:
+void fph(TreeNode r, int a, List<TreeNode> l)
+{
+    if (r == null) return;
+
+    if (r.val == a)
+    {
+        l.add(r);
+        return;
+    }
+
+    fph(r.left, a, l);
+    if (l.size() > 0)
+    {
+        l.add(r);
+        return;
+    }
+
+    fph(r.right, a, l);
+    if (l.size() > 0)
+    {
+        l.add(r);
+        return;
+    }
+}
+
+What this code is doing
+This function finds the path from a given node (a) to the root of a binary tree.
+It uses recursion + backtracking.
+When the target node a is found, it starts adding nodes to the list l while returning back up the recursion stack.
+
+Step-by-step explanation
+Base case
+If current node r is null, stop.
+Target found
+If r.val == a, add this node to list l and return.
+Search left subtree
+Call fph on r.left
+If l is not empty, target was found below
+Add current node r to path and return
+Search right subtree
+Same logic as left subtree
+
+Final result
+l will contain nodes from target node up to the root
+Order: target → parent → … → root
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+BST Operations:
+Binary Search Tree (BST) Operations maintain ordered data where
+left subtree < root < right subtree.
+Insert: Add a value by comparing with current node and placing it in the left or right subtree.
+Delete:
+Leaf node → remove directly
+One child → replace node with its child
+Two children → replace with inorder successor
+Search: Compare values and move left or right until found or null.
+Traversal (Preorder): Visit root → left → right to display tree structure.
+BST operations are efficient and run in O(h) time, where h is tree height.
+Code:
+class BeingZero {
+    Node r = null;
+
+    public void insert(int x) {
+        r = insertBST(r, x);
+    }
+
+    private Node insertBST(Node root, int x) {
+        if (root == null) return new Node(x);
+        if (x < root.data) root.left = insertBST(root.left, x);
+        else if (x > root.data) root.right = insertBST(root.right, x);
+        return root;
+    }
+
+    public void delete(int x) {
+        r = deleteBST(r, x);
+    }
+
+    private Node deleteBST(Node root, int x) {
+        if (root == null) return null;
+
+        if (x < root.data) root.left = deleteBST(root.left, x);
+        else if (x > root.data) root.right = deleteBST(root.right, x);
+        else {
+            if (root.left == null) return root.right;
+            if (root.right == null) return root.left;
+
+            Node succ = root.right;
+            while (succ.left != null) succ = succ.left;
+            root.data = succ.data;
+            root.right = deleteBST(root.right, succ.data);
+        }
+        return root;
+    }
+
+    public boolean search(int x) {
+        Node cur = r;
+        while (cur != null) {
+            if (cur.data == x) return true;
+            cur = (x < cur.data) ? cur.left : cur.right;
+        }
+        return false;
+    }
+
+    public List<Integer> getPreOrder() {
+        List<Integer> res = new ArrayList<>();
+        preorder(r, res);
+        return res;
+    }
+
+    private void preorder(Node root, List<Integer> res) {
+        if (root == null) return;
+        res.add(root.data);
+        preorder(root.left, res);
+        preorder(root.right, res);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Diameter(max width between 2 nodes in tree):
+1. Build the BST
+Insert each element of the array into the BST using BST rules
+(left < root, right > root).
+2. Find the Diameter
+Use a recursive function to calculate the height of each node.
+At every node, compute:
+diameter = leftHeight + rightHeight + 1
+Keep updating the maximum diameter.
+3. Why it works
+Height and diameter are calculated in the same traversal.
+Each node is visited once.
+Time Complexity: O(n)
+Space Complexity: O(h) (h = height of the tree)
+Code:
+class TreeNode {
+    int val;
+    TreeNode left, right;
+
+    TreeNode(int d) {
+        val = d;
+        left = right = null;
+    }
+}
+
+class BSTDiameter {
+
+    int max = 0;
+
+    // Insert a value into BST
+    TreeNode insert(TreeNode root, int val) {
+        if (root == null) {
+            return new TreeNode(val);
+        }
+
+        if (val < root.val) {
+            root.left = insert(root.left, val);
+        } else {
+            root.right = insert(root.right, val);
+        }
+
+        return root;
+    }
+
+    // Build BST from array
+    TreeNode buildBST(int[] arr) {
+        TreeNode root = null;
+        for (int val : arr) {
+            root = insert(root, val);
+        }
+        return root;
+    }
+
+    // Calculate diameter
+    int diameterOfTree(TreeNode root) {
+        height(root);
+        return max;
+    }
+
+    // Height function
+    int height(TreeNode root) {
+        if (root == null)
+            return 0;
+
+        int left = height(root.left);
+        int right = height(root.right);
+
+        max = Math.max(max, left + right + 1);
+
+        return 1 + Math.max(left, right);
+    }
+
+    // Driver code
+    public static void main(String[] args) {
+        BSTDiameter obj = new BSTDiameter();
+
+        int[] arr = {10, 5, 1, 7, 40, 50};
+
+        TreeNode root = obj.buildBST(arr);
+
+        int diameter = obj.diameterOfTree(root);
+        System.out.println("Diameter of the BST: " + diameter);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Level Order:
+1. Nodes at kth level:
+Use level-order traversal (BFS) with a queue.
+Start from the root and keep track of the current level.
+For each level:
+Count how many nodes are present (queue size).
+If the current level equals k, return that count.
+Add left and right children of each node to the queue.
+If level k is not found, return 0.
+Idea:
+Each BFS iteration processes one full level, so when we reach level k, the queue size gives the number of nodes at that level.
+Code:
+int nodesAtKlevel(Node r, int k) {
+    if (r == null || k < 0) return 0;
+    if (k == 0) return 1;
+
+    Queue<Node> q = new LinkedList<>();
+    int level = 0;
+    q.add(r);
+
+    while (!q.isEmpty()) {
+        int size = q.size();
+        if (level == k) return size;
+
+        while (size-- != 0) {
+            Node curr = q.remove();
+            if (curr.left != null) q.add(curr.left);
+            if (curr.right != null) q.add(curr.right);
+        }
+        level++;
+    }
+    return 0;
+}
+
+2. Left View of Binary Tree 
+The left view of a binary tree contains the leftmost node at each level.
+These are the nodes visible when the tree is viewed from the left side.
+Approach:
+Use level-order traversal (BFS) with a queue.
+For each level, add the first node encountered to the answer list.
+Continue until all levels are processed.
+Complexity
+Time: O(n)
+Space: O(n)
+Code:
+import java.util.*;
+
+class BSTNode {
+    int data;
+    BSTNode left, right;
+
+    BSTNode(int d) {
+        data = d;
+        left = right = null;
+    }
+}
+
+class BeingZero {
+    public List<Integer> leftViewOfTree(BSTNode r) {
+        List<Integer> ans = new ArrayList<>();
+        if (r == null) return ans;
+
+        Queue<BSTNode> q = new LinkedList<>();
+        q.add(r);
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+
+            for (int i = 0; i < size; i++) {
+                BSTNode curr = q.remove();
+
+                // First node of each level
+                if (i == 0) ans.add(curr.data);
+
+                if (curr.left != null) q.add(curr.left);
+                if (curr.right != null) q.add(curr.right);
+            }
+        }
+        return ans;
+    }
+}
+
+3. Right View of Binary Tree:
+The right view of a binary tree contains the rightmost node at each level.
+These are the nodes visible when the tree is viewed from the right side.
+Approach:
+Use level-order traversal (BFS).
+For each level, add the last node to the result list.
+Complexity
+Time: O(n)
+Space: O(n)
+Code:
+import java.util.*;
+
+class BSTNode {
+    int data;
+    BSTNode left, right;
+
+    BSTNode(int d) {
+        data = d;
+        left = right = null;
+    }
+}
+
+class BeingZero {
+    public List<Integer> rightViewOfTree(BSTNode r) {
+        List<Integer> ans = new ArrayList<>();
+        if (r == null) return ans;
+
+        Queue<BSTNode> q = new LinkedList<>();
+        q.add(r);
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+
+            for (int i = 0; i < size; i++) {
+                BSTNode curr = q.remove();
+
+                // Last node of each level
+                if (i == size - 1) ans.add(curr.data);
+
+                if (curr.left != null) q.add(curr.left);
+                if (curr.right != null) q.add(curr.right);
+            }
+        }
+        return ans;
+    }
+}
+
+4. Zig-Zag Traversal:
+Zig-zag traversal prints nodes level by level.
+Direction alternates at each level:
+Level 0 → Left to Right
+Level 1 → Right to Left
+Level 2 → Left to Right …
+Approach:
+Use level-order traversal (BFS).
+Maintain a boolean flag to track direction.
+Reverse insertion order when direction changes.
+Complexity
+Time: O(n)
+Space: O(n)
+Code:
+import java.util.*;
+
+class BSTNode {
+    int data;
+    BSTNode left, right;
+
+    BSTNode(int d) {
+        data = d;
+        left = right = null;
+    }
+}
+
+class BeingZero {
+    public List<List<Integer>> zigZagTraversal(BSTNode r) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (r == null) return ans;
+
+        Queue<BSTNode> q = new LinkedList<>();
+        q.add(r);
+        boolean leftToRight = true;
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+            List<Integer> level = new ArrayList<>();
+
+            for (int i = 0; i < size; i++) {
+                BSTNode curr = q.remove();
+
+                if (leftToRight)
+                    level.add(curr.data);
+                else
+                    level.add(0, curr.data);
+
+                if (curr.left != null) q.add(curr.left);
+                if (curr.right != null) q.add(curr.right);
+            }
+
+            ans.add(level);
+            leftToRight = !leftToRight;
+        }
+        return ans;
+    }
+}
+
+5. Covered and Uncovered nodes:
+Approach (Covered vs Uncovered Nodes)
+Covered nodes are the nodes that are not on the boundary of the tree.
+Uncovered nodes are the boundary nodes:
+Leftmost and rightmost node at each level.
+What the code does
+Use level-order traversal (BFS) with a queue.
+For each level:
+The first (i == 0) and last (i == size-1) nodes are treated as uncovered.
+All other nodes at that level are treated as covered.
+Accumulate:
+sumU → sum of uncovered nodes
+sumC → sum of covered nodes
+Return the absolute difference between the two sums.
+Why this works
+BFS naturally processes the tree level by level.
+Boundary nodes at each level are easily identified using indices.
+Ensures every node is counted exactly once.
+Complexity
+Time: O(n)
+Space: O(n) (queue)
+This approach is efficient and easy to understand.
+Code:
+import java.util.*;
+
+class TreeNode{
+    int val;
+    TreeNode left, right;
+    TreeNode(int d){
+      	val = d;
+      	left = right = null;
+    }
+}
+
+
+class BeingZero{
+    public long coveredUncoveredNodes(TreeNode root) {
+        long sumU = 0;
+        long sumC = 0;
+        if(root == null) return 0;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty())
+            {
+                int size = q.size();
+                for(int i=0; i<size; i++)
+                    {
+                        TreeNode curr = q.remove();
+                        if(i == 0 || i == size-1)
+                        {
+                            sumU += curr.val;
+                        }
+                        else
+                        {
+                            sumC += curr.val;
+                        }   
+                    if(curr.left != null) q.add(curr.left);
+                    if(curr.right != null) q.add(curr.right);
+                    }
+            }
+        return Math.abs(sumU - sumC);
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Vertical Order:
+1. Top View of a Binary Tree:
+Idea
+Nodes visible from the top when looking at the tree.
+For each horizontal distance (HD), only the first node encountered is in the top view.
+Use BFS + map.
+Code:
+import java.util.*;
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int d) {
+        val = d;
+        left = right = null;
+    }
+}
+
+class TopViewTree {
+    public List<Integer> topView(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null) return ans;
+
+        Map<Integer, Integer> map = new TreeMap<>(); // HD -> Node value
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(root, 0));
+
+        while (!q.isEmpty()) {
+            Pair curr = q.remove();
+            TreeNode node = curr.node;
+            int hd = curr.hd;
+
+            // Only first node at each HD
+            map.putIfAbsent(hd, node.val);
+
+            if (node.left != null) q.add(new Pair(node.left, hd - 1));
+            if (node.right != null) q.add(new Pair(node.right, hd + 1));
+        }
+
+        for (int key : map.keySet()) ans.add(map.get(key));
+        return ans;
+    }
+
+    static class Pair {
+        TreeNode node;
+        int hd;
+        Pair(TreeNode n, int h) { node = n; hd = h; }
+    }
+}
+Complexity
+Time: O(n)
+Space: O(n) (queue + map)
+
+2. Bottom View of a Binary Tree:
+Idea
+Nodes visible from the bottom when looking at the tree.
+For each horizontal distance (HD), only the last node encountered is in the bottom view.
+Use BFS + map, updating the node value at every encounter.
+Code:
+import java.util.*;
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int d) {
+        val = d;
+        left = right = null;
+    }
+}
+
+class BottomViewTree {
+    public List<Integer> bottomView(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null) return ans;
+
+        Map<Integer, Integer> map = new TreeMap<>(); // HD -> Node value
+        Queue<Pair> q = new LinkedList<>();
+        q.add(new Pair(root, 0));
+
+        while (!q.isEmpty()) {
+            Pair curr = q.remove();
+            TreeNode node = curr.node;
+            int hd = curr.hd;
+
+            // Always update to last node at HD
+            map.put(hd, node.val);
+
+            if (node.left != null) q.add(new Pair(node.left, hd - 1));
+            if (node.right != null) q.add(new Pair(node.right, hd + 1));
+        }
+
+        for (int key : map.keySet()) ans.add(map.get(key));
+        return ans;
+    }
+
+    static class Pair {
+        TreeNode node;
+        int hd;
+        Pair(TreeNode n, int h) { node = n; hd = h; }
+    }
+}
+Complexity
+Time: O(n)
+Space: O(n) (queue + map)
+
+3. LCA:
+The key idea to solve this problem is to traverse the tree and find the lowest node that has both p and q in its subtree.
+Base Case:
+If the current node is null, return null.
+If the current node matches p or q, return the current node.
+Recursive Traversal:
+Recursively search for p and q in the left and right subtrees.
+If both left and right subtrees return non-null values, the current node is the LCA.
+If only one subtree returns a non-null value, return that node as it contains the LCA.
+Code:
+import java.util.*;
+
+class TreeNode{
+    int val;
+    TreeNode left, right;
+    TreeNode(int d){
+      	val = d;
+      	left = right = null;
+    }
+}
+
+class BeingZero{
+	TreeNode lowestCommonAncestor(TreeNode r, int p, int q){
+		if(r == null) return null;
+        if(r.val == p || r.val == q) return r;
+        TreeNode leftTree = lowestCommonAncestor(r.left, p ,q);
+        TreeNode rightTree = lowestCommonAncestor(r.right, p, q);
+        if(leftTree == null) return rightTree;
+        if(rightTree == null) return leftTree;
+        return r;
+	}
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Serialize and Deserialize Binary Tree:
+Serialize: Convert a binary tree into a string (or list) so it can be stored or transmitted.
+Deserialize: Convert the string back to the original binary tree structure.
+Approach (Simple BFS / Level Order):
+Use level-order traversal (BFS) to serialize the tree:
+Add null for missing children.
+Store nodes in a comma-separated string.
+To deserialize:
+Split the string.
+Use a queue to assign children level by level.
+How It Works
+Serialize:
+BFS adds nodes to a queue.
+Append "null" for missing children.
+Converts tree → string.
+Deserialize:
+Split string into nodes.
+Reconstruct tree level by level using a queue.
+Complexity
+Operation	Complexity
+Serialize	O(n)
+Deserialize	O(n)
+Space	O(n)
+Code:
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int d) { val = d; left = right = null; }
+}
+
+class SerializeDeserialize {
+
+    // Serialize
+    public String serialize(TreeNode root) {
+        if(root == null) return "";
+        StringBuilder sb = new StringBuilder();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        
+        while(!q.isEmpty()) {
+            TreeNode curr = q.poll();
+            if(curr == null) {
+                sb.append("null,");
+                continue;
+            }
+            sb.append(curr.val).append(",");
+            q.add(curr.left);
+            q.add(curr.right);
+        }
+        return sb.toString();
+    }
+
+    // Deserialize
+    public TreeNode deserialize(String data) {
+        if(data.isEmpty()) return null;
+        String[] nodes = data.split(",");
+        TreeNode root = new TreeNode(Integer.parseInt(nodes[0]));
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int i = 1;
+        
+        while(!q.isEmpty() && i < nodes.length) {
+            TreeNode curr = q.poll();
+            
+            // left child
+            if(!nodes[i].equals("null")) {
+                curr.left = new TreeNode(Integer.parseInt(nodes[i]));
+                q.add(curr.left);
+            }
+            i++;
+            
+            // right child
+            if(i < nodes.length && !nodes[i].equals("null")) {
+                curr.right = new TreeNode(Integer.parseInt(nodes[i]));
+                q.add(curr.right);
+            }
+            i++;
+        }
+        return root;
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Recursion - Is binary image:
+Idea
+Two trees A and B are mirror images if:
+Both are empty → Yes (base case)
+Both are non-empty AND:
+Root values are equal
+Left subtree of A is mirror of right subtree of B
+Right subtree of A is mirror of left subtree of B
+How It Works
+Base cases:
+Both null → mirror 
+One null → not mirror 
+Recursive check:
+t1.left vs t2.right
+t1.right vs t2.left
+Roots must match
+Complexity
+Operation	Complexity
+Time	O(n)
+Space(recursion stack)	O(h) (tree height)
+Code:
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int d) { val = d; left = right = null; }
+}
+
+class MirrorCheck {
+    public boolean isMirror(TreeNode t1, TreeNode t2) {
+        // Both empty
+        if(t1 == null && t2 == null) return true;
+        
+        // One empty, one not
+        if(t1 == null || t2 == null) return false;
+        
+        // Check root value and recursively check left/right
+        return (t1.val == t2.val) 
+                && isMirror(t1.left, t2.right)
+                && isMirror(t1.right, t2.left);
+    }
+
+    // Test
+    public static void main(String[] args) {
+        TreeNode tree1 = new TreeNode(1);
+        tree1.left = new TreeNode(2);
+        tree1.right = new TreeNode(3);
+
+        TreeNode tree2 = new TreeNode(1);
+        tree2.left = new TreeNode(3);
+        tree2.right = new TreeNode(2);
+
+        MirrorCheck mc = new MirrorCheck();
+        System.out.println(mc.isMirror(tree1, tree2)); // true
+    }
+}
