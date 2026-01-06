@@ -1,0 +1,319 @@
+#Binary Search
+Binary search is a quick way to find an element in a sorted array. It works by checking the middle element first.If the middle value is the one we want, 
+the search stops. If the target value is smaller, we search in the left half of the array. If it is larger, we search in the right half. 
+This process keeps repeating until the element is found or there are no elements left to check.
+
+#Application:
+
+1.Searching in a sorted array
+Binary search is mainly used to find an element quickly in a sorted array or list.
+2.Finding first or last occurrence
+Used to find the first or last position of a repeated element in a sorted array.
+3.Finding missing or repeated elements
+Helps in identifying missing numbers or duplicates in sorted sequences.
+4.Lower bound and upper bound problems
+Used to find the smallest element ≥ target (lower bound) or largest element ≤ target (upper bound).
+5.Optimization problems (Binary Search on Answer)
+Used in problems where we need to find the minimum or maximum possible answer (e.g., minimum time, maximum capacity).
+6.Finding square root or cube root
+Used to find square root or cube root of a number efficiently.
+7.Searching in infinite or large arrays
+Used when the array size is very large or infinite by reducing search space quickly.
+8.Problems with monotonic behavior
+Used when a condition changes from false to true or true to false only once.
+9.Placement and allocation problems
+Used in problems like book allocation, aggressive cows, or minimum distance problems.
+10.Database and dictionary lookups
+Used in databases, dictionaries, and phonebooks where data is sorted.
+
+#Iterative Binary Search
+static int binarySearchIterative(int[] arr, int target) {
+    int low = 0, high = arr.length - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] == target)
+            return mid;
+        else if (arr[mid] < target)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+    return -1;
+}
+
+#Recusrsive Binary Search
+static int binarySearchRecursive(int[] arr, int low, int high, int target) {
+    if (low > high)
+        return -1;
+
+    int mid = low + (high - low) / 2;
+
+    if (arr[mid] == target)
+        return mid;
+    else if (arr[mid] < target)
+        return binarySearchRecursive(arr, mid + 1, high, target);
+    else
+        return binarySearchRecursive(arr, low, mid - 1, target);
+}
+
+#Floor and Ceil Value
+Floor value: The floor of a number is the greatest value that is less than or equal to the given number.
+Ceil value: The ceil of a number is the smallest value that is greater than or equal to the given number.
+
+#Floor function
+static int floorValue(int[] arr, int target) {
+    int low = 0, high = arr.length - 1;
+    int ans = -1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] <= target) {
+            ans = arr[mid];
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    return ans;
+}
+
+#Ceil Function
+static int ceilValue(int[] arr, int target) {
+    int low = 0, high = arr.length - 1;
+    int ans = -1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] >= target) {
+            ans = arr[mid];
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    return ans;
+}
+
+#COUNT ELEMENTS IN A RANGE USING FLOOR AND CEIL
+Problem:
+Count the number of elements in a sorted array that lie between x and y (both inclusive).
+ceil(x) gives the smallest element ≥ x
+floor(y) gives the largest element ≤ y
+So, all elements between ceil(x) and floor(y) lie in the required range.
+Formula:
+Count = floor(y) - ceil(x) + 1
+Explanation :
+floor(y) represents the last valid element in the range
+ceil(x) represents the first valid element in the range
+Subtracting gives the number of elements between them
+Adding +1 makes the count inclusive of both ends
+
+#BinarySearch on duplicates
+->For first occurences
+if(arr[mid]==key)
+  {
+    ans = mid;
+    high = mid-1;
+  }
+else if(arr[mid]>key)
+  {
+    high = mid -1;
+  }
+else
+  {
+    low = mid+1;
+  }
+Explanation:
+When arr[mid] == key, store mid and move left (high = mid - 1) to check if the key appears earlier.
+Other cases adjust the range to keep searching toward the left side.
+->for last occurance
+if(arr[mid] == key)
+  {
+    ans = mid;
+    low = mid+1;
+  }
+Explanation:
+When arr[mid] == key, store mid and move right (low = mid + 1) to check if the key appears later.
+This ensures we find the rightmost position of the key.
+
+#BinarySearch without Array
+Binary search can be used without an array when the answer lies in a numerical range and a condition changes in only one direction (true/false).
+Instead of searching elements, we search the possible answer range and repeatedly reduce it by half until the correct value is found
+Problem:
+FIND SQUARE ROOT OF A PERFECT SQUARE USING BINARY SEARCH
+
+Explanation:
+To find the square root of a perfect square, we search for a number whose square is equal to the given number.
+We use binary search on the range 1 to n, check the middle value, and compare mid × mid with the number.
+If the square is equal, mid is the square root; if smaller, search the right side; if larger, search the left side.
+
+Binary Search Function (Java):
+
+static int squareRoot(int n) {
+    int low = 1, high = n;
+
+    while (low <= high) {
+        long mid = low + (high - low) / 2;
+        long sq = mid*mid;
+        if (sq == n)
+            return mid;
+        else if (sq< n)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+    return -1;
+}
+
+#BinarySearch on corrupt files and databases
+Using Binary Search on Corrupt Files:
+When a file is suspected to be corrupted, binary search can be used to find the exact position where the corruption starts.
+We split the file into two parts and check which part is working correctly. Based on the result, we keep checking only the faulty half. 
+This reduces the time needed to find the error in large files.
+
+Using Binary Search in Databases:
+Databases store data in a sorted order (often using indexes). Binary search helps quickly locate a record by repeatedly dividing the search space in half.
+This makes searching fast even when the database contains millions of records.
+
+Example Program:
+// Simulate a file as an array of bytes
+static int findCorruptIndex(int[] file) {
+    int low = 0, high = file.length - 1;
+    int ans = -1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        // Suppose 0 means corrupted, 1 means okay
+        if (file[mid] == 0) {
+            ans = mid;        // Found corruption at mid
+            high = mid - 1;   // Check if earlier part is also corrupted
+        } else {
+            low = mid + 1;    // Safe, check the later part
+        }
+    }
+    return ans; // Returns the first corrupt index
+}
+
+#Array in Order
+Binary search only works on a sorted array (ascending or descending).
+The elements must be in order because the algorithm decides which half to search based on comparisons with the middle element.
+If the array is unsorted, binary search will not work correctly.
+
+#Count Number of Zeros in the given array where all the zeros are on the left side of the array
+static int countZeros(int[] arr) {
+    int low = 0, high = arr.length - 1;
+    int ans = -1; // stores index of last zero
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] == 0) {
+            ans = mid;       // possible last zero
+            low = mid + 1;   // search in right half
+        } else {
+            high = mid - 1;  // search in left half
+        }
+    }
+
+    return ans + 1; // total zeros
+}
+Explanation:
+To count the number of zeros in a sorted array where all zeros are on the left, we can use binary search to find the last zero. 
+We initialize low and high pointers at the start and end of the array and calculate the middle index mid. 
+If arr[mid] is zero, we store mid as a possible last zero and move the low pointer to mid + 1 to search the right half. 
+If arr[mid] is not zero, we move the high pointer to mid - 1 to search the left half. After the loop ends, the total number of zeros is the index of the last zero plus one (ans + 1).
+This method is efficient and works in O(log n) time using binary search.
+
+#Rotated Sorted Array
+
+static int searchRotated(int[] arr, int target) {
+    int low = 0, high = arr.length - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] == target)
+            return mid;
+
+        // Check if left half is sorted
+        if (arr[low] <= arr[mid]) {
+            if (target >= arr[low] && target < arr[mid])
+                high = mid - 1; // target in left half
+            else
+                low = mid + 1;  // target in right half
+        } 
+        // Right half must be sorted
+        else {
+            if (target > arr[mid] && target <= arr[high])
+                low = mid + 1;  // target in right half
+            else
+                high = mid - 1; // target in left half
+        }
+    }
+    return -1; // target not found
+}
+
+Explanation:
+To search an element in a rotated sorted array using binary search, we repeatedly check the middle element and determine which half of the array is properly sorted. 
+If the middle element matches the target, we return its index. Otherwise, if the left half is sorted and the target lies within it, we search the left half;
+if not, we search the right half. Similarly, if the right half is sorted and the target lies within it, we search the right half; otherwise, we search the left half.
+This process continues until the target is found or the search space is exhausted, allowing us to find the element efficiently in O(log n) time.
+
+#BinarySearch on Answer
+
+Binary Search on Answer is used when we need to find a number (the answer) within a range instead of searching an array. 
+The idea is that if a number satisfies the problem’s condition, then all numbers larger or smaller (depending on the problem) will also satisfy it.
+We repeatedly check the middle number in the range: if it works, we try smaller numbers to find the best answer; if it doesn’t work, we try larger numbers. 
+This way, we can find the answer efficiently without checking every number one by one.
+
+Example: Find the smallest number x such that x*x ≥ 50. Using binary search on numbers 1 to 50, we find that x = 8 because 8*8 = 64 ≥ 50 and 7*7 = 49 < 50.
+
+#Example Problem:
+#Koko Eating Bananas
+Problem:
+There are n piles of bananas: piles[i] bananas in the ith pile.
+Koko can eat k bananas per hour from any pile.
+If a pile has less than k bananas, she eats the whole pile in one hour.
+She has h hours to finish all the bananas.
+Goal:
+Find the minimum integer k (bananas per hour) such that Koko can eat all the bananas within h hours.
+Code:
+int minEatingSpeed(int[] arr, int h) {
+    int low = 1;
+    int high = (int)1e9;
+    int ans = high;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+
+        if (answer(arr, mid, h)) {
+            ans = mid;
+            high = mid - 1; // try smaller speed
+        } else {
+            low = mid + 1;  // need faster speed
+        }
+    }
+
+    return ans;
+}
+
+// Check if Koko can finish all bananas at speed mid within h hours
+boolean answer(int[] arr, int mid, int h) {
+    int time = 0;
+    for (int ele : arr) {
+        // ceil division without using Math.ceil
+        time += (ele + mid - 1) / mid;
+    }
+    return time <= h;
+}
+
+Explanation:
+To find the minimum speed k at which Koko can eat all the bananas within h hours, we use binary search on the answer. 
+We set a range of possible speeds (low = 1 to high = 1e9) and repeatedly check the middle speed mid. For each mid, we calculate the total hours needed by 
+summing ceil(pile / mid) for all piles.If Koko can finish in time, we try a smaller speed to see if there’s a slower possible answer;
+if she cannot finish, we try a larger speed. This process continues until we find the smallest speed k that allows her to finish all piles within h hours.
