@@ -1,0 +1,114 @@
+#Divide and Conquer
+Divide and Conquer is an algorithmic technique where a problem is solved by breaking it into smaller subproblems, solving each subproblem independently, 
+and then combining their solutions to get the final result. Typically, it follows three steps: 
+Divide (split the problem into smaller parts of the same type), Conquer (solve the smaller problems, usually using recursion),and Combine (merge the results). 
+This approach improves efficiency and is widely used in algorithms like Merge Sort, Quick Sort, and Binary Search, often reducing time complexity from quadratic to logarithmic or linearithmic.
+
+#Binary Eponentiation
+
+static long binExp(long a, long n, long mod) {
+    long result = 1;
+    a = a % mod;
+
+    while (n > 0) {
+        if ((n & 1) == 1) {   // if n is odd
+            result = (result * a) % mod;
+        }
+        a = (a * a) % mod;   // square the base
+        n >>= 1;             // n = n / 2
+    }
+    return result;
+}
+
+Explanation:
+Binary exponentiation efficiently computes a^n by repeatedly dividing the exponent by 2 instead of multiplying 𝑎 repeatedly. If the current exponent is odd,
+the result is multiplied by the current base. In every iteration, the base is squared and the exponent is halved, which significantly reduces the number of operations. 
+This approach brings the time complexity down from O(n) to O(log n), making it ideal for large powers, especially when combined with modulo operations to prevent overflow.
+
+#Matrix Exponentiation
+
+static final long MOD = 1000000007;
+
+// Matrix multiplication
+static long[][] matrixMult(long[][] A, long[][] B) {
+    int M = A.length;
+    long[][] result = new long[M][M];
+
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < M; j++) {
+            for (int k = 0; k < M; k++) {
+                result[i][j] = (result[i][j] + A[i][k] * B[k][j]) % MOD;
+            }
+        }
+    }
+    return result;
+}
+
+// Matrix exponentiation
+static long[][] matrixPow(long[][] matrix, long power) {
+    int M = matrix.length;
+
+    // Identity matrix
+    long[][] result = new long[M][M];
+    for (int i = 0; i < M; i++) {
+        result[i][i] = 1;
+    }
+
+    long[][] base = matrix;
+
+    while (power > 0) {
+        if ((power & 1) == 1) {
+            result = matrixMult(result, base);
+        }
+        base = matrixMult(base, base);
+        power >>= 1;  // power = power / 2
+    }
+
+    return result;
+}
+
+Explanation:
+Matrix exponentiation is a fast technique used to calculate the power of a square matrix. Instead of multiplying the matrix N times, binary exponentiation is used to 
+reduce the number of operations. First, matrix multiplication is performed by multiplying rows of one matrix with columns of another and taking modulo 10^9 + 7 
+to keep values within limits. To compute S^N, the result is initialized as an identity matrix. While N is greater than zero, if N is odd, the result matrix is
+multiplied with the current matrix. Then the matrix is squared and N is divided by 2. This process continues until N becomes zero, giving the final result efficiently 
+with time complexity O(M^3 log N).
+
+#Fermats Little Theorem
+
+Fermat’s Little Theorem says that if p is a prime number and a is not divisible by p, then
+a^(p−1) ≡ 1 (mod p).
+Using this rule, the modular inverse of a can be found as
+a^(p−2) mod p.
+This theorem is mainly used to perform division in modular arithmetic, especially when the modulo is a large prime number like 10^9 + 7.
+
+Code:
+static long MOD = 1000000007;
+
+// Binary Exponentiation
+static long power(long a, long n) {
+    long result = 1;
+    a = a % MOD;
+
+    while (n > 0) {
+        if ((n & 1) == 1) {     // if n is odd
+            result = (result * a) % MOD;
+        }
+        a = (a * a) % MOD;     // square the base
+        n >>= 1;               // n = n / 2
+    }
+    return result;
+}
+
+// Modular Inverse using Fermat's Little Theorem
+static long modInverse(long a) {
+    return power(a, MOD - 2);
+}
+
+Explanation:
+The code is used to find the modular inverse of a number using Fermat’s Little Theorem. The power function calculates a raised to the power n using binary exponentiation,
+which reduces the number of multiplications by dividing the exponent by 2 in each step. If the exponent is odd, the current result is multiplied by the base value. 
+The modInverse function applies Fermat’s Little Theorem, which states that when the modulo is prime, the modular inverse of a is a^(MOD−2) mod MOD. 
+In the main function, the modular inverse of the given number is computed and printed. This approach is efficient and works in O(log MOD) time, making it suitable
+for large values.
+
