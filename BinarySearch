@@ -3,6 +3,19 @@ Binary search is a quick way to find an element in a sorted array. It works by c
 the search stops. If the target value is smaller, we search in the left half of the array. If it is larger, we search in the right half. 
 This process keeps repeating until the element is found or there are no elements left to check.
 
+#Complexities
+1.Time Complexity of Binary Search:
+Best Case: O(1) → if the middle element is the target on the first check.
+Worst Case / Average Case: O(log n) → because each step halves the search space.
+Reason:
+At each step, binary search divides the array or range into two halves, so the number of remaining elements reduces exponentially. 
+After at most log₂(n) steps, the search space becomes 1.
+
+2.Space Complexity
+Iterative version: O(1) → only a few variables needed.
+Recursive version: O(log n) → due to the recursion call stack.
+Note: For binary search on answer, n is replaced by the range of possible answers, so complexity = O(log(maxAnswer) * timeToCheckCondition).
+
 #Application:
 
 1.Searching in a sorted array
