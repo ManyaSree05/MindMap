@@ -1,0 +1,236 @@
+#Character
+
+What is Character?
+Character is a wrapper class in Java that represents a primitive char as an object.
+
+#Important Character Functions
+1.isLetter(char ch)
+Checks whether the character is a letter.
+Example
+Character.isLetter('A') → true
+Character.isLetter('1') → false
+
+2.isDigit(char ch)
+Checks whether the character is a digit.
+Example
+Character.isDigit('5') → true
+Character.isDigit('A') → false
+
+3.isUpperCase(char ch)
+Checks whether the character is uppercase.
+Example
+Character.isUpperCase('A') → true
+Character.isUpperCase('a') → false
+
+4.isLowerCase(char ch)
+Checks whether the character is lowercase.
+Example
+Character.isLowerCase('a') → true
+Character.isLowerCase('A') → false
+
+5.toUpperCase(char ch)
+Converts the character to uppercase.
+Example
+Character.toUpperCase('a') → 'A'
+
+#Strings
+#Input Reading
+1.sc.next()
+We use sc.next() function to read string input when string size is greater than 0 and when string does not have spaces. 
+Example:
+Input: Hello World
+Output using sc.next(): Hello
+
+2.sc.nextLine();
+Reads the entire line, including spaces, until Enter is pressed.Use it when input may contain spaces (full name, sentence, address). 
+Example:
+Input: Hello World
+Output using sc.nextLine(): Hello World
+#If you use next() or nextInt() before nextLine(), add an extra sc.nextLine() to consume the leftover newline.
+
+COMMON STRING FUNCTIONS IN JAVA
+
+1.length()
+Returns the number of characters in the string.
+Example:
+"Java".length() → 4
+
+2.charAt(int index)
+Returns the character at the specified index.
+Example:
+"Java".charAt(1) → 'a'
+
+3.toUpperCase()
+Converts all characters in the string to uppercase.
+Example:
+"java".toUpperCase() → "JAVA"
+
+4.toLowerCase()
+Converts all characters in the string to lowercase.
+Example:
+"JAVA".toLowerCase() → "java"
+
+5.equals(String str)
+Compares two strings for content equality.
+Example:
+"Java".equals("Java") → true
+
+6.equalsIgnoreCase(String str)
+Compares two strings ignoring case.
+Example:
+"Java".equalsIgnoreCase("java") → true
+
+7.compareTo(String str)
+Compares two strings lexicographically.
+Example:
+"abc".compareTo("abd") → negative value
+
+8.substring(int beginIndex)
+Returns substring from the given index to the end.
+Example:
+"Java".substring(2) → "va"
+
+9.substring(int beginIndex, int endIndex)
+Returns substring from beginIndex to endIndex-1.
+Example:
+"Java".substring(1,3) → "av"
+
+10.contains(CharSequence s)
+Checks if the string contains the given sequence.
+Example:
+"Java Programming".contains("Java") → true
+
+11.startsWith(String prefix)
+Checks if the string starts with the given prefix.
+Example:
+"Java".startsWith("Ja") → true
+
+12.endsWith(String suffix)
+Checks if the string ends with the given suffix.
+Example:
+"Java".endsWith("va") → true
+
+13.indexOf(char / String)
+Returns the first occurrence index of given character or string.
+Example:
+"Java".indexOf('a') → 1
+
+lastIndexOf(char / String)
+Returns the last occurrence index of given character or string.
+Example:
+"Java".lastIndexOf('a') → 3
+
+14.replace(char old, char new)
+Replaces all occurrences of old character with new character.
+Example:
+"Java".replace('a','o') → "Jovo"
+
+15.trim()
+Removes leading and trailing spaces.
+Example:
+" Java ".trim() → "Java"
+
+16.split(String regex)
+Splits the string based on a delimiter.
+Example:
+"a,b,c".split(",") → ["a","b","c"]
+
+17.isEmpty()
+Checks if the string is empty (length = 0).
+Example:
+"".isEmpty() → true
+
+18.valueOf(any type)
+Converts given data type to string.
+Example:
+String.valueOf(100) → "100"
+
+19.concat(String str)
+Concatenates the given string to the end.
+Example:
+"Java".concat("World") → "JavaWorld"
+ 
+#StringBuilder
+
+What is StringBuilder?
+StringBuilder is a mutable class in Java used to create and modify strings without creating new objects every time.
+
+Why StringBuilder is used?
+Strings are immutable (cannot be changed once created).
+StringBuilder allows modifying the same object, which improves performance.
+Faster than String when many changes are required.
+
+Where do we use StringBuilder?
+When string content changes frequently
+In loops (concatenation inside loops)
+While building dynamic strings
+When performance and memory efficiency matter
+
+#Important StringBuilder Constructor
+
+1.StringBuilder()
+Creates an empty StringBuilder.
+Example:
+StringBuilder sb = new StringBuilder();
+
+2.StringBuilder(String str)
+Creates StringBuilder with initial string.
+Example:
+StringBuilder sb = new StringBuilder("Java");
+
+#Important StringBuilder Functions
+
+1.append()
+Adds data at the end of the string.
+Example:
+sb.append(" World"); → "Java World"
+
+2.insert(int index, String str)
+Inserts string at given index.
+Example:
+sb.insert(4," Language"); → "Java Language"
+
+3.replace(int start, int end, String str)
+Replaces characters from start to end-1.
+Example:
+sb.replace(0,4,"Python") → "Python"
+
+4.delete(int start, int end)
+Deletes characters from start to end-1.
+Example:
+sb.delete(0,2) → removes first two characters
+
+5.deleteCharAt(int index)
+Deletes character at specified index.
+Example:
+sb.deleteCharAt(1)
+
+5.reverse()
+Reverses the string.
+Example:
+sb.reverse() → "avaJ"
+
+6.capacity()
+Returns current capacity of StringBuilder.
+Example:
+sb.capacity() → 16 (default)
+
+7.length()
+Returns number of characters in StringBuilder.
+Example:
+sb.length()
+
+8.charAt(int index)
+Returns character at given index.
+Example:
+sb.charAt(2)
+
+9.setCharAt(int index, char ch)
+Replaces character at given index.
+Example:
+sb.setCharAt(0,'M')
+
+10.toString()
+Converts StringBuilder to String.
+Example:
+String s = sb.toString();
